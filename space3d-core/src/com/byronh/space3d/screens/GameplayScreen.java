@@ -22,45 +22,40 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.byronh.space3d.Space3DGame;
+import com.byronh.space3d.input.KeyboardController;
 
 
 public class GameplayScreen extends AbstractScreen {
 
-	Space3DGame game;
-
 	Stage stage;
-
 	Image image;
-	
 	private InputMultiplexer inputMultiplexer;
-
 	private PerspectiveCamera cam;
-
 	private CameraInputController camController;
-
 	private Environment environment;
-
 	private ModelBatch modelBatch;
-
 	private Model sphere;
-
 	private ModelInstance planet;
-	
 	private Skin skin;
 
 	public GameplayScreen(Space3DGame game) {
+		super(game);
+	}
 
-		this.game = game;
+	@Override
+	public void show() {
 		
+		game.log("Starting game world");
+
 		inputMultiplexer = new InputMultiplexer();
 
 		modelBatch = new ModelBatch();
-		
+
 		skin = game.manager.get("ui/Holo-dark-hdpi.json", Skin.class);
-		
+
 		stage = new Stage();
 		image = new Image(game.manager.get("texture-maps/starscape.png", Texture.class));
-		//stage.addActor(image);
+		// stage.addActor(image);
 
 		environment = new Environment();
 		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, .10f, .10f, .10f, 1f));
@@ -72,6 +67,8 @@ public class GameplayScreen extends AbstractScreen {
 		cam.near = 0.1f;
 		cam.far = 2000f;
 		cam.update();
+		
+		KeyboardController keyboardController = new KeyboardController(game);
 
 		camController = new CameraInputController(cam);
 		camController.scrollFactor = -0.05f;
@@ -80,22 +77,24 @@ public class GameplayScreen extends AbstractScreen {
 
 		sphere = modelBuilder.createSphere(2f, 2f, 2f, 40, 40, new Material(), Usage.Position | Usage.Normal | Usage.TextureCoordinates);
 		planet = new ModelInstance(sphere);
-		
+
 		final TextButton button = new TextButton("Click me", skin, "default");
-        button.setPosition(100, 100);
-        
-        button.addListener(new ClickListener(){
-            @Override 
-            public void clicked(InputEvent event, float x, float y){
-                button.setText("Clicked!");
-            }
-        });
-        
-        stage.addActor(button);
-        
-        inputMultiplexer.addProcessor(stage);
-        inputMultiplexer.addProcessor(camController);
-        Gdx.input.setInputProcessor(inputMultiplexer);
+		button.setPosition(100, 100);
+
+		button.addListener(new ClickListener() {
+
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				button.setText("Clicked!");
+			}
+		});
+
+		stage.addActor(button);
+		
+		inputMultiplexer.addProcessor(keyboardController);
+		inputMultiplexer.addProcessor(stage);
+		inputMultiplexer.addProcessor(camController);
+		Gdx.input.setInputProcessor(inputMultiplexer);
 	}
 
 	@Override
@@ -106,7 +105,7 @@ public class GameplayScreen extends AbstractScreen {
 				| (Gdx.graphics.getBufferFormat().coverageSampling ? GL20.GL_COVERAGE_BUFFER_BIT_NV : 0));
 
 		camController.update();
-		
+
 		modelBatch.begin(cam);
 		modelBatch.render(planet, environment);
 		modelBatch.end();
@@ -117,10 +116,6 @@ public class GameplayScreen extends AbstractScreen {
 
 	@Override
 	public void resize(int width, int height) {
-	}
-
-	@Override
-	public void show() {
 	}
 
 	@Override
@@ -140,6 +135,6 @@ public class GameplayScreen extends AbstractScreen {
 		modelBatch.dispose();
 		sphere.dispose();
 		stage.dispose();
-//		game.manager.unload("texture-maps/starscape.png");
+		// game.manager.unload("texture-maps/starscape.png");
 	}
 }

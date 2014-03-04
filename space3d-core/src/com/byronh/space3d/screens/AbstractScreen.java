@@ -13,6 +13,7 @@ public abstract class AbstractScreen implements Screen {
 
     public AbstractScreen(Space3DGame game) {
         this.game = game;
+        game.log("Switching to " + this.getClass().getSimpleName());
     }
 
     @Override
