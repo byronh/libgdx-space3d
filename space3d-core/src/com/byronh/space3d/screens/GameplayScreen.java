@@ -156,10 +156,12 @@ public class GameplayScreen extends AbstractScreen {
 		
 		planet.transform.rotate(Vector3.Y, 2.5f * delta);
 		
-		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		fbo.begin();
+//		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		Gdx.gl.glClearColor(0, 0, 0, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT
-				| (Gdx.graphics.getBufferFormat().coverageSampling ? GL20.GL_COVERAGE_BUFFER_BIT_NV : 0));
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+//		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT
+//				| (Gdx.graphics.getBufferFormat().coverageSampling ? GL20.GL_COVERAGE_BUFFER_BIT_NV : 0));
 		
 		camController.update();
 		
@@ -177,19 +179,19 @@ public class GameplayScreen extends AbstractScreen {
 //		sm.renderFB("bloom_fb");
 //		sm.end();
 		
-//		modelBatch.begin(cam);
-//		modelBatch.render(planet, shader);
-//		modelBatch.end();
+		modelBatch.begin(cam);
+		modelBatch.render(planet, environment, shader1);
+		modelBatch.end();
+		fbo.end();
 		
-		
-		renderContext.begin();
-		shader1.begin(cam, renderContext);
-		shader1.render(renderable);
-		shader1.end();
-//		shader2.begin(cam, renderContext);
-//		shader2.render(renderable);
-//		shader2.end();
-		renderContext.end();
+//		renderContext.begin();
+//		shader1.begin(cam, renderContext);
+//		shader1.render(renderable);
+//		shader1.end();
+////		shader2.begin(cam, renderContext);
+////		shader2.render(renderable);
+////		shader2.end();
+//		renderContext.end();
 		
 
 		stage.act(delta);
