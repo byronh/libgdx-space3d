@@ -19,7 +19,7 @@ import com.byronh.space3d.screens.LoadingScreen;
  */
 public class Space3DGame extends Game {
 
-	Config config = new Config();
+	GameConfig config = new GameConfig();
 
 	public AssetManager manager;
 
@@ -72,7 +72,7 @@ public class Space3DGame extends Game {
 	 * @author Byron
 	 *
 	 */
-	private static class Config {
+	private static class GameConfig {
 		
 		private boolean devMode;
 	}
@@ -85,9 +85,9 @@ public class Space3DGame extends Game {
 		String fileContent = handle.readString();
 		Json json = new Json();
 
-		json.setElementType(Config.class, "devMode", Boolean.class);
+		json.setElementType(GameConfig.class, "devMode", Boolean.class);
 
-		config = json.fromJson(Config.class, fileContent);
+		config = json.fromJson(GameConfig.class, fileContent);
 		log("Configuration successfully loaded");
 	}
 

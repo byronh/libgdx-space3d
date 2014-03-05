@@ -25,7 +25,7 @@ import com.byronh.space3d.Space3DGame;
 import com.byronh.space3d.input.KeyboardController;
 
 
-public class GameplayScreen extends AbstractScreen {
+public class GameplayScreen extends Screen3D {
 
 	Stage stage;
 	Image image;
@@ -44,8 +44,9 @@ public class GameplayScreen extends AbstractScreen {
 
 	@Override
 	public void show() {
+		super.show();
 		
-		game.log("Starting game world");
+		game.log("Initializing 3D game world");
 
 		inputMultiplexer = new InputMultiplexer();
 
@@ -95,10 +96,14 @@ public class GameplayScreen extends AbstractScreen {
 		inputMultiplexer.addProcessor(stage);
 		inputMultiplexer.addProcessor(camController);
 		Gdx.input.setInputProcessor(inputMultiplexer);
+		
+		//"<default>", "depth", "gouraud", "phong", "normal", "fur", "cubemap", "reflect", "test"
+		setShader("phong");
 	}
 
 	@Override
 	public void render(float delta) {
+		super.render(delta);
 
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT
@@ -106,32 +111,23 @@ public class GameplayScreen extends AbstractScreen {
 
 		camController.update();
 
-		modelBatch.begin(cam);
-		modelBatch.render(planet, environment);
-		modelBatch.end();
+//		modelBatch.begin(cam);
+//		modelBatch.render(planet, environment);
+//		modelBatch.end();
+		
+		shaderBatch.begin(cam);
+		shaderBatch.render(planet, environment);
+		shaderBatch.end();
 
 		stage.act(delta);
 		stage.draw();
 	}
 
 	@Override
-	public void resize(int width, int height) {
-	}
-
-	@Override
-	public void hide() {
-	}
-
-	@Override
-	public void pause() {
-	}
-
-	@Override
-	public void resume() {
-	}
-
-	@Override
 	public void dispose() {
+		super.dispose();
+		skin.dispose();
+		skin = null;
 		modelBatch.dispose();
 		sphere.dispose();
 		stage.dispose();
