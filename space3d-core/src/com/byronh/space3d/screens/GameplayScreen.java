@@ -3,8 +3,8 @@ package com.byronh.space3d.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g3d.Environment;
@@ -12,11 +12,18 @@ import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
+import com.badlogic.gdx.graphics.g3d.Renderable;
+import com.badlogic.gdx.graphics.g3d.Shader;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
+import com.badlogic.gdx.graphics.g3d.model.NodePart;
+import com.badlogic.gdx.graphics.g3d.shaders.DefaultShader;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
+import com.badlogic.gdx.graphics.g3d.utils.DefaultTextureBinder;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
+import com.badlogic.gdx.graphics.g3d.utils.RenderContext;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -26,8 +33,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.byronh.space3d.Space3DGame;
 import com.byronh.space3d.input.KeyboardController;
-import com.thesecretpie.shader.ShaderManager;
-import com.thesecretpie.shader.test.Shapes;
 
 
 public class GameplayScreen extends AbstractScreen {
@@ -43,7 +48,11 @@ public class GameplayScreen extends AbstractScreen {
 	private ModelInstance planet;
 	private Skin skin;
 	
-//	Mesh cube;
+	private Renderable renderable;
+	private RenderContext renderContext;
+	private Shader shader1;
+	private Shader shader2;
+	private FrameBuffer fbo;
 
 	public GameplayScreen(Space3DGame game) {
 		super(game);
@@ -85,13 +94,13 @@ public class GameplayScreen extends AbstractScreen {
 
 		sphere = modelBuilder.createSphere(2f, 2f, 2f, 40, 40, new Material(), Usage.Normal | Usage.Position | Usage.TextureCoordinates);
 		planet = new ModelInstance(sphere);
-		//environment.set(new VertexAttribute);
 		
 		Texture planetTexture = new Texture("texture-maps/venus.gif");
 		TextureAttribute planetTextureAttribute = new TextureAttribute(TextureAttribute.Diffuse, planetTexture);
 		Material planetMaterial = planet.materials.get(0);
 		planetMaterial.set(planetTextureAttribute);
 		//planetMaterial.set(new BlendingAttribute(0.5f));
+		//planetMaterial.set(ColorAttribute.createDiffuse(100f, 200f, 150f, 1.0f));
 
 		final TextButton button = new TextButton("Click me", skin, "default");
 		button.setPosition(100, 100);
@@ -119,6 +128,26 @@ public class GameplayScreen extends AbstractScreen {
 //		sm.createFB("bloom_fb");
 //		
 //		cube = Shapes.genCube();
+		
+		renderable = new Renderable();
+		NodePart blockPart = planet.nodes.first().parts.first();
+		blockPart.setRenderable(renderable);
+		renderable.environment = environment;
+		renderable.worldTransform.idt();
+		
+		renderContext = new RenderContext(new DefaultTextureBinder(DefaultTextureBinder.WEIGHTED, 1));
+		String data = "com/byronh/space3d/shaders";
+		String vert1 = Gdx.files.classpath(data+"/default.vert").readString();
+		String frag1 = Gdx.files.classpath(data+"/default.frag").readString();
+		shader1 = new DefaultShader(renderable, new DefaultShader.Config(vert1, frag1));
+		shader1.init();
+		
+		String vert2 = Gdx.files.classpath(data+"/test.vert").readString();
+		String frag2 = Gdx.files.classpath(data+"/test.frag").readString();
+		shader2 = new DefaultShader(renderable, new DefaultShader.Config(vert2, frag2));
+		shader2.init();
+		
+		fbo = new FrameBuffer(Pixmap.Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
 	}
 
 	@Override
@@ -148,9 +177,20 @@ public class GameplayScreen extends AbstractScreen {
 //		sm.renderFB("bloom_fb");
 //		sm.end();
 		
-		modelBatch.begin(cam);
-		modelBatch.render(planet, environment);
-		modelBatch.end();
+//		modelBatch.begin(cam);
+//		modelBatch.render(planet, shader);
+//		modelBatch.end();
+		
+		
+		renderContext.begin();
+		shader1.begin(cam, renderContext);
+		shader1.render(renderable);
+		shader1.end();
+//		shader2.begin(cam, renderContext);
+//		shader2.render(renderable);
+//		shader2.end();
+		renderContext.end();
+		
 
 		stage.act(delta);
 		stage.draw();
@@ -159,6 +199,7 @@ public class GameplayScreen extends AbstractScreen {
 	@Override
 	public void dispose() {
 		super.dispose();
+		shader1.dispose();
 		skin.dispose();
 		skin = null;
 		modelBatch.dispose();

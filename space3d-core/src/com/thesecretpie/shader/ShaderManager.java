@@ -535,6 +535,7 @@ public class ShaderManager {
 	 * @param fragPath - path to fragment shader source
 	 */
 	public void add(String key, String vertPath, String fragPath) {
+		Gdx.app.log("INFO", vertPath + "- ---" + fragPath);
 		if (am != null)
 			add(am, key, vertPath, fragPath);
 		else
