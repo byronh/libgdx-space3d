@@ -3,6 +3,7 @@ package com.byronh.space3d.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
@@ -25,9 +26,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.byronh.space3d.Space3DGame;
 import com.byronh.space3d.input.KeyboardController;
+import com.thesecretpie.shader.ShaderManager;
+import com.thesecretpie.shader.test.Shapes;
 
 
-public class GameplayScreen extends Screen3D {
+public class GameplayScreen extends AbstractScreen {
 
 	Stage stage;
 	Image image;
@@ -39,6 +42,8 @@ public class GameplayScreen extends Screen3D {
 	private Model sphere;
 	private ModelInstance planet;
 	private Skin skin;
+	
+//	Mesh cube;
 
 	public GameplayScreen(Space3DGame game) {
 		super(game);
@@ -54,10 +59,10 @@ public class GameplayScreen extends Screen3D {
 
 		modelBatch = new ModelBatch();
 
-		skin = game.manager.get("ui/Holo-dark-hdpi.json", Skin.class);
+		skin = game.assets.get("ui/Holo-dark-hdpi.json", Skin.class);
 
 		stage = new Stage();
-		image = new Image(game.manager.get("texture-maps/starscape.png", Texture.class));
+		image = new Image(game.assets.get("texture-maps/starscape.png", Texture.class));
 		// stage.addActor(image);
 
 		environment = new Environment();
@@ -107,7 +112,13 @@ public class GameplayScreen extends Screen3D {
 		Gdx.input.setInputProcessor(inputMultiplexer);
 		
 		//"<default>", "depth", "gouraud", "phong", "normal", "fur", "cubemap", "reflect", "test"
-		setShader("planet");
+//		setShader("planet");
+		
+//		ShaderManager sm = game.shaders;
+//		sm.add("bloom", "default.vert", "bloom.frag");
+//		sm.createFB("bloom_fb");
+//		
+//		cube = Shapes.genCube();
 	}
 
 	@Override
@@ -115,20 +126,31 @@ public class GameplayScreen extends Screen3D {
 		super.render(delta);
 		
 		planet.transform.rotate(Vector3.Y, 2.5f * delta);
-
+		
+		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT
 				| (Gdx.graphics.getBufferFormat().coverageSampling ? GL20.GL_COVERAGE_BUFFER_BIT_NV : 0));
-
-		camController.update();
-
-//		modelBatch.begin(cam);
-//		modelBatch.render(planet, environment);
-//		modelBatch.end();
 		
-		shaderBatch.begin(cam);
-		shaderBatch.render(planet, environment);
-		shaderBatch.end();
+		camController.update();
+		
+//		ShaderManager sm = game.shaders;
+//		
+//		sm.beginFB("bloom_fb");
+//		sm.begin("empty");
+//		sm.setUniformMatrix("u_worldView", cam.combined);
+//		cube.render(sm.getCurrent(), GL20.GL_LINES);
+//		
+//		sm.end();
+//		sm.endFB();
+//	
+//		sm.begin("bloom");
+//		sm.renderFB("bloom_fb");
+//		sm.end();
+		
+		modelBatch.begin(cam);
+		modelBatch.render(planet, environment);
+		modelBatch.end();
 
 		stage.act(delta);
 		stage.draw();

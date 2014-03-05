@@ -7,9 +7,11 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.utils.Json;
 import com.byronh.space3d.screens.GameplayScreen;
 import com.byronh.space3d.screens.LoadingScreen;
+import com.thesecretpie.shader.ShaderManager;
 
 
 /**
@@ -21,7 +23,8 @@ public class Space3DGame extends Game {
 
 	GameConfig config = new GameConfig();
 
-	public AssetManager manager;
+	public AssetManager assets;
+	public ShaderManager shaders;
 
 	public LoadingScreen loadingScreen;
 	public GameplayScreen gameplayScreen;
@@ -31,12 +34,23 @@ public class Space3DGame extends Game {
 
 		loadConfig();
 
-		manager = new AssetManager();
+		assets = new AssetManager();
+		
+		ShaderProgram.pedantic = false;
+		shaders = new ShaderManager("", assets);
 
 		loadingScreen = new LoadingScreen(this);
 		gameplayScreen = new GameplayScreen(this);
-
+		
 		setScreen(loadingScreen);
+	}
+	
+	@Override
+	public void dispose() {
+		super.dispose();
+		
+		shaders.dispose();
+		assets.dispose();
 	}
 
 	/**
@@ -54,7 +68,7 @@ public class Space3DGame extends Game {
 	 */
 	public void log(String message) {
 		if (config.devMode) {
-			Gdx.app.log(Space3DGame.class.getSimpleName() + "[" + time() + "]", message);
+			Gdx.app.log(Space3DGame.class.getSimpleName()/* + "[" + time() + "]"*/, message);
 		}
 	}
 
