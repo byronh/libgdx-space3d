@@ -12,9 +12,11 @@ import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
+import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -76,8 +78,15 @@ public class GameplayScreen extends Screen3D {
 
 		ModelBuilder modelBuilder = new ModelBuilder();
 
-		sphere = modelBuilder.createSphere(2f, 2f, 2f, 40, 40, new Material(), Usage.Position | Usage.Normal | Usage.TextureCoordinates);
+		sphere = modelBuilder.createSphere(2f, 2f, 2f, 40, 40, new Material(), Usage.Normal | Usage.Position | Usage.TextureCoordinates);
 		planet = new ModelInstance(sphere);
+		//environment.set(new VertexAttribute);
+		
+		Texture planetTexture = new Texture("texture-maps/venus.gif");
+		TextureAttribute planetTextureAttribute = new TextureAttribute(TextureAttribute.Diffuse, planetTexture);
+		Material planetMaterial = planet.materials.get(0);
+		planetMaterial.set(planetTextureAttribute);
+		//planetMaterial.set(new BlendingAttribute(0.5f));
 
 		final TextButton button = new TextButton("Click me", skin, "default");
 		button.setPosition(100, 100);
@@ -98,12 +107,14 @@ public class GameplayScreen extends Screen3D {
 		Gdx.input.setInputProcessor(inputMultiplexer);
 		
 		//"<default>", "depth", "gouraud", "phong", "normal", "fur", "cubemap", "reflect", "test"
-		setShader("phong");
+		setShader("planet");
 	}
 
 	@Override
 	public void render(float delta) {
 		super.render(delta);
+		
+		planet.transform.rotate(Vector3.Y, 2.5f * delta);
 
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT

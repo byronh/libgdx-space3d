@@ -108,7 +108,6 @@ public class Screen3D extends AbstractScreen {
 			ShaderLoader loader = new ShaderLoader(shaderRoot);
 			shaderProvider.config.vertexShader = loader.load(name+".glsl:VS");
 			shaderProvider.config.fragmentShader = loader.load(name+".glsl:FS");
-			shaderProvider.name = name;
 		}
 		shaderProvider.clear();
 	}
