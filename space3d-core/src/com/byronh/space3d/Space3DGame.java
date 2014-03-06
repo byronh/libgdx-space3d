@@ -11,7 +11,6 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.utils.Json;
 import com.byronh.space3d.screens.GameplayScreen;
 import com.byronh.space3d.screens.LoadingScreen;
-import com.thesecretpie.shader.ShaderManager;
 
 
 /**
@@ -24,7 +23,6 @@ public class Space3DGame extends Game {
 	GameConfig config = new GameConfig();
 
 	public AssetManager assets;
-	public ShaderManager shaders;
 
 	public LoadingScreen loadingScreen;
 	public GameplayScreen gameplayScreen;
@@ -37,7 +35,6 @@ public class Space3DGame extends Game {
 		assets = new AssetManager();
 		
 		ShaderProgram.pedantic = false;
-		shaders = new ShaderManager("", assets);
 
 		loadingScreen = new LoadingScreen(this);
 		gameplayScreen = new GameplayScreen(this);
@@ -48,8 +45,6 @@ public class Space3DGame extends Game {
 	@Override
 	public void dispose() {
 		super.dispose();
-		
-		shaders.dispose();
 		assets.dispose();
 	}
 
