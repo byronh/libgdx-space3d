@@ -51,7 +51,7 @@ public class GameplayScreen extends AbstractScreen {
 	public Array<ModelInstance> instances = new Array<ModelInstance>();
 	private Skin skin;
 	
-//	private Model starScape;
+	private Model starScape;
 
 	private Renderable renderable;
 	private Shader shader1, shader2;
@@ -85,8 +85,8 @@ public class GameplayScreen extends AbstractScreen {
 		// stage.addActor(image);
 
 		environment = new Environment();
-		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, .02f, .02f, .02f, 1f));
-		environment.add(new PointLight().set(1f, 1f, 1f, -15f, 1.5f, 15f, 300f));
+		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, .1f, .1f, .1f, 1f));
+		environment.add(new PointLight().set(1f, 1f, 1f, -15f, -5.5f, 15f, 300f));
 //		 environment.add(new DirectionalLight().set(0.5f, 0.5f, 0.5f, -1f, 0f, -0.2f));
 
 		cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -120,11 +120,11 @@ public class GameplayScreen extends AbstractScreen {
 
 		ModelBuilder modelBuilder = new ModelBuilder();
 		Texture texture = game.assets.get("texture-maps/venus.gif", Texture.class);
-		texture.setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
+		texture.setFilter(TextureFilter.Nearest, TextureFilter.MipMapLinearNearest);
 		TextureAttribute venus = TextureAttribute.createDiffuse(texture);
-		ColorAttribute spec = ColorAttribute.createSpecular(0.9f, 0.9f, 0.6f, 1.0f);
+		ColorAttribute spec = ColorAttribute.createSpecular(0.7f, 0.7f, 0.5f, 1f);
 		sphere = modelBuilder.createSphere(3f, 3f, 3f, 60, 60, new Material(venus, spec), Usage.Normal | Usage.Position | Usage.TextureCoordinates);
-//		sphere = modelBuilder.createBox(2f, 2f, 2f, new Material(venus, spec), Usage.Normal | Usage.Position | Usage.TextureCoordinates);
+//		sphere = modelBuilder.createBox(2f, 2f, 2f,  new Material(venus, spec), Usage.Normal | Usage.Position | Usage.TextureCoordinates);
 
 		for (int x = -50; x <= 50; x += 50) {
 			for (int z = -50; z <= 50; z += 50) {
@@ -140,13 +140,13 @@ public class GameplayScreen extends AbstractScreen {
 		renderable.worldTransform.idt();
 
 		String data = "com/byronh/space3d/shaders";
-		String vert1 = Gdx.files.classpath(data + "/test.vert.glsl").readString();
-		String frag1 = Gdx.files.classpath(data + "/test.frag.glsl").readString();
+		String vert1 = Gdx.files.classpath(data + "/planet.vert.glsl").readString();
+		String frag1 = Gdx.files.classpath(data + "/planet.frag.glsl").readString();
 		shader1 = new DefaultShader(renderable, new DefaultShader.Config(vert1, frag1));
 		shader1.init();
 
-		shader2 = new PlanetShader();
-		shader2.init();
+//		shader2 = new PlanetShader();
+//		shader2.init();
 
 		fb1 = new FrameBuffer(Pixmap.Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
 		fb2 = new FrameBuffer(Pixmap.Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
@@ -169,7 +169,7 @@ public class GameplayScreen extends AbstractScreen {
 					| (Gdx.graphics.getBufferFormat().coverageSampling ? GL20.GL_COVERAGE_BUFFER_BIT_NV : 0));
 			modelBatch.begin(cam);
 			for (ModelInstance instance : instances) {
-				instance.transform.rotate(Vector3.Y, 1.5f * delta);
+				instance.transform.rotate(Vector3.Y, 2.5f * delta);
 				modelBatch.render(instance, environment, shader1);
 			}
 			modelBatch.end();
@@ -180,21 +180,21 @@ public class GameplayScreen extends AbstractScreen {
 		region1 = new TextureRegion(pass1);
 		region1.flip(false, true);
 		
-		fb2.begin();
-		{
-			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT
-					| (Gdx.graphics.getBufferFormat().coverageSampling ? GL20.GL_COVERAGE_BUFFER_BIT_NV : 0));
-			modelBatch.begin(cam);
-			for (ModelInstance instance : instances) {
-				modelBatch.render(instance, environment, shader2);
-			}
-			modelBatch.end();
-		}
-		fb2.end();
-		
-		pass2 = fb2.getColorBufferTexture();
-		region2 = new TextureRegion(pass2);
-		region2.flip(false, true);
+//		fb2.begin();
+//		{
+//			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT
+//					| (Gdx.graphics.getBufferFormat().coverageSampling ? GL20.GL_COVERAGE_BUFFER_BIT_NV : 0));
+//			modelBatch.begin(cam);
+//			for (ModelInstance instance : instances) {
+//				modelBatch.render(instance, environment, shader2);
+//			}
+//			modelBatch.end();
+//		}
+//		fb2.end();
+//		
+//		pass2 = fb2.getColorBufferTexture();
+//		region2 = new TextureRegion(pass2);
+//		region2.flip(false, true);
 		
 		// Blend both frame buffers
 		spriteBatch.begin();

@@ -38,6 +38,7 @@ public class PlanetShader implements Shader {
 
 	@Override
 	public void init() {
+		// UNUSED
 		String vert = Gdx.files.classpath(data + "/planet.vert.glsl").readString();
 		String frag = Gdx.files.classpath(data + "/planet.frag.glsl").readString();
 		program = new ShaderProgram(vert, frag);
