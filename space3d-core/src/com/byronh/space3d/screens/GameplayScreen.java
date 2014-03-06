@@ -190,7 +190,8 @@ public class GameplayScreen extends AbstractScreen {
 		pass2 = fb2.getColorBufferTexture();
 		region2 = new TextureRegion(pass2);
 		region2.flip(false, true);
-
+		
+		// Blend both frame buffers
 		spriteBatch.begin();
 		spriteBatch.draw(region1, 0, 0);
 		spriteBatch.setColor(1.0f, 1.0f, 1.0f, 0.5f);
