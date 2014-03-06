@@ -30,7 +30,7 @@ public class PlanetShader implements Shader {
 	int u_worldTrans;
 	int u_normalMatrix;
 	
-	int u_lightPos;
+	int u_viewPos;
 	
 	int u_diffuseTexture;
 
@@ -38,8 +38,8 @@ public class PlanetShader implements Shader {
 
 	@Override
 	public void init() {
-		String vert = Gdx.files.classpath(data + "/test.vert.glsl").readString();
-		String frag = Gdx.files.classpath(data + "/test.frag.glsl").readString();
+		String vert = Gdx.files.classpath(data + "/planet.vert.glsl").readString();
+		String frag = Gdx.files.classpath(data + "/planet.frag.glsl").readString();
 		program = new ShaderProgram(vert, frag);
 		if (!program.isCompiled())
 			throw new GdxRuntimeException(program.getLog());
@@ -49,7 +49,7 @@ public class PlanetShader implements Shader {
 		u_worldTrans = program.getUniformLocation("u_worldTrans");
 		u_normalMatrix = program.getUniformLocation("u_normalMatrix");
 		
-		u_lightPos = program.getUniformLocation("u_lightPos");
+		u_viewPos = program.getUniformLocation("u_viewPos");
 		
 		u_diffuseTexture = program.getUniformLocation("u_diffuseTexture");
 	}
@@ -66,6 +66,7 @@ public class PlanetShader implements Shader {
 		program.begin();
 		program.setUniformMatrix(u_projTrans, camera.combined);
 		program.setUniformMatrix(u_viewTrans, camera.view);
+		program.setUniformf(u_viewPos, camera.position);
 		context.setDepthTest(GL20.GL_LEQUAL);
 		context.setCullFace(GL20.GL_BACK);
 	}
@@ -74,9 +75,6 @@ public class PlanetShader implements Shader {
 	public void render(Renderable renderable) {
 		program.setUniformMatrix(u_worldTrans, renderable.worldTransform);
 		program.setUniformMatrix(u_normalMatrix, temp.set(renderable.worldTransform).inv().transpose());
-		
-		program.setUniformf(u_lightPos, renderable.environment.pointLights.first().position);
-		
 		program.setUniformi(u_diffuseTexture,
 				context.textureBinder.bind(((TextureAttribute) renderable.material.get(TextureAttribute.Diffuse)).textureDescription.texture));
 		renderable.mesh.render(program, renderable.primitiveType, renderable.meshPartOffset, renderable.meshPartSize);

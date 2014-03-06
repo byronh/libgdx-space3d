@@ -34,7 +34,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.byronh.space3d.Space3DGame;
-import com.byronh.space3d.graphics.ToonShader;
+import com.byronh.space3d.graphics.PlanetShader;
 import com.byronh.space3d.input.KeyboardController;
 
 
@@ -50,6 +50,8 @@ public class GameplayScreen extends AbstractScreen {
 	private Model sphere;
 	public Array<ModelInstance> instances = new Array<ModelInstance>();
 	private Skin skin;
+	
+//	private Model starScape;
 
 	private Renderable renderable;
 	private Shader shader1, shader2;
@@ -83,9 +85,9 @@ public class GameplayScreen extends AbstractScreen {
 		// stage.addActor(image);
 
 		environment = new Environment();
-		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, .10f, .10f, .10f, 1f));
-		environment.add(new PointLight().set(1f, 1f, 1f, -15f, 1.5f, 15f, 1000f));
-		// environment.add(new DirectionalLight().set(1f, 1f, 1f, -1f, 0f, -0.2f));
+		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, .02f, .02f, .02f, 1f));
+		environment.add(new PointLight().set(1f, 1f, 1f, -15f, 1.5f, 15f, 300f));
+//		 environment.add(new DirectionalLight().set(0.5f, 0.5f, 0.5f, -1f, 0f, -0.2f));
 
 		cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		cam.position.set(7.5f, 1.5f, 7.5f);
@@ -120,12 +122,12 @@ public class GameplayScreen extends AbstractScreen {
 		Texture texture = game.assets.get("texture-maps/venus.gif", Texture.class);
 		texture.setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
 		TextureAttribute venus = TextureAttribute.createDiffuse(texture);
-		ColorAttribute spec = ColorAttribute.createSpecular(0.6f, 0.6f, 0.5f, 1.0f);
-		sphere = modelBuilder.createSphere(2f, 2f, 2f, 40, 40, new Material(venus, spec), Usage.Normal | Usage.Position | Usage.TextureCoordinates);
+		ColorAttribute spec = ColorAttribute.createSpecular(0.9f, 0.9f, 0.6f, 1.0f);
+		sphere = modelBuilder.createSphere(3f, 3f, 3f, 60, 60, new Material(venus, spec), Usage.Normal | Usage.Position | Usage.TextureCoordinates);
 //		sphere = modelBuilder.createBox(2f, 2f, 2f, new Material(venus, spec), Usage.Normal | Usage.Position | Usage.TextureCoordinates);
 
-		for (int x = -5; x <= 5; x += 5) {
-			for (int z = -5; z <= 5; z += 5) {
+		for (int x = -50; x <= 50; x += 50) {
+			for (int z = -50; z <= 50; z += 50) {
 				ModelInstance instance = new ModelInstance(sphere, x, 0, z);
 				instances.add(instance);
 			}
@@ -138,12 +140,12 @@ public class GameplayScreen extends AbstractScreen {
 		renderable.worldTransform.idt();
 
 		String data = "com/byronh/space3d/shaders";
-		String vert1 = Gdx.files.classpath(data + "/default.vert.glsl").readString();
-		String frag1 = Gdx.files.classpath(data + "/default.frag.glsl").readString();
+		String vert1 = Gdx.files.classpath(data + "/test.vert.glsl").readString();
+		String frag1 = Gdx.files.classpath(data + "/test.frag.glsl").readString();
 		shader1 = new DefaultShader(renderable, new DefaultShader.Config(vert1, frag1));
 		shader1.init();
 
-		shader2 = new ToonShader();
+		shader2 = new PlanetShader();
 		shader2.init();
 
 		fb1 = new FrameBuffer(Pixmap.Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
@@ -184,7 +186,6 @@ public class GameplayScreen extends AbstractScreen {
 					| (Gdx.graphics.getBufferFormat().coverageSampling ? GL20.GL_COVERAGE_BUFFER_BIT_NV : 0));
 			modelBatch.begin(cam);
 			for (ModelInstance instance : instances) {
-				instance.transform.rotate(Vector3.Y, 1.5f * delta);
 				modelBatch.render(instance, environment, shader2);
 			}
 			modelBatch.end();
@@ -197,9 +198,10 @@ public class GameplayScreen extends AbstractScreen {
 		
 		// Blend both frame buffers
 		spriteBatch.begin();
-		spriteBatch.draw(region1, 0, 0);
-		spriteBatch.setColor(1.0f, 1.0f, 1.0f, 0.5f);
+//		spriteBatch.setColor(1f, 1f, 1f, 1f);
 //		spriteBatch.draw(region2, 0, 0);
+//		spriteBatch.setColor(1f, 1f, 1f, 0.5f);
+		spriteBatch.draw(region1, 0, 0);
 		spriteBatch.end();
 
 		stage.act(delta);
