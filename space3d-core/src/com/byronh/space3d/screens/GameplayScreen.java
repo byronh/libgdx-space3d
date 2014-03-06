@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -117,9 +118,11 @@ public class GameplayScreen extends AbstractScreen {
 
 		ModelBuilder modelBuilder = new ModelBuilder();
 		Texture texture = game.assets.get("texture-maps/venus.gif", Texture.class);
-		TextureAttribute venus = new TextureAttribute(TextureAttribute.Diffuse, texture);
-		sphere = modelBuilder.createSphere(2f, 2f, 2f, 40, 40, new Material(venus), Usage.Normal | Usage.Position | Usage.TextureCoordinates);
-//		sphere = modelBuilder.createBox(2f, 2f, 2f, new Material(), Usage.Normal | Usage.Position | Usage.TextureCoordinates);
+		texture.setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
+		TextureAttribute venus = TextureAttribute.createDiffuse(texture);
+		ColorAttribute spec = ColorAttribute.createSpecular(0.6f, 0.6f, 0.5f, 1.0f);
+		sphere = modelBuilder.createSphere(2f, 2f, 2f, 40, 40, new Material(venus, spec), Usage.Normal | Usage.Position | Usage.TextureCoordinates);
+//		sphere = modelBuilder.createBox(2f, 2f, 2f, new Material(venus, spec), Usage.Normal | Usage.Position | Usage.TextureCoordinates);
 
 		for (int x = -5; x <= 5; x += 5) {
 			for (int z = -5; z <= 5; z += 5) {
@@ -194,9 +197,9 @@ public class GameplayScreen extends AbstractScreen {
 		
 		// Blend both frame buffers
 		spriteBatch.begin();
-//		spriteBatch.draw(region1, 0, 0);
+		spriteBatch.draw(region1, 0, 0);
 		spriteBatch.setColor(1.0f, 1.0f, 1.0f, 0.5f);
-		spriteBatch.draw(region2, 0, 0);
+//		spriteBatch.draw(region2, 0, 0);
 		spriteBatch.end();
 
 		stage.act(delta);
