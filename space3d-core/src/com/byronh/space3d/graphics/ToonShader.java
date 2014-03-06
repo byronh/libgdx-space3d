@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g3d.Renderable;
 import com.badlogic.gdx.graphics.g3d.Shader;
-import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.utils.RenderContext;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix3;
@@ -15,7 +14,7 @@ import com.badlogic.gdx.utils.GdxRuntimeException;
 /**
  * @author Byron
  */
-public class PlanetShader implements Shader {
+public class ToonShader implements Shader {
 
 	ShaderProgram program;
 	Camera camera;
@@ -31,15 +30,13 @@ public class PlanetShader implements Shader {
 	int u_normalMatrix;
 	
 	int u_lightPos;
-	
-	int u_diffuseTexture;
 
 	private String data = "com/byronh/space3d/shaders";
 
 	@Override
 	public void init() {
-		String vert = Gdx.files.classpath(data + "/test.vert.glsl").readString();
-		String frag = Gdx.files.classpath(data + "/test.frag.glsl").readString();
+		String vert = Gdx.files.classpath(data + "/toon.vert.glsl").readString();
+		String frag = Gdx.files.classpath(data + "/toon.frag.glsl").readString();
 		program = new ShaderProgram(vert, frag);
 		if (!program.isCompiled())
 			throw new GdxRuntimeException(program.getLog());
@@ -50,8 +47,6 @@ public class PlanetShader implements Shader {
 		u_normalMatrix = program.getUniformLocation("u_normalMatrix");
 		
 		u_lightPos = program.getUniformLocation("u_lightPos");
-		
-		u_diffuseTexture = program.getUniformLocation("u_diffuseTexture");
 	}
 
 	@Override
@@ -77,8 +72,6 @@ public class PlanetShader implements Shader {
 		
 		program.setUniformf(u_lightPos, renderable.environment.pointLights.first().position);
 		
-		program.setUniformi(u_diffuseTexture,
-				context.textureBinder.bind(((TextureAttribute) renderable.material.get(TextureAttribute.Diffuse)).textureDescription.texture));
 		renderable.mesh.render(program, renderable.primitiveType, renderable.meshPartOffset, renderable.meshPartSize);
 	}
 

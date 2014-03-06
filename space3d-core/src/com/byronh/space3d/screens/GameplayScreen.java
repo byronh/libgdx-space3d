@@ -33,7 +33,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.byronh.space3d.Space3DGame;
-import com.byronh.space3d.graphics.PlanetShader;
+import com.byronh.space3d.graphics.ToonShader;
 import com.byronh.space3d.input.KeyboardController;
 
 
@@ -119,6 +119,7 @@ public class GameplayScreen extends AbstractScreen {
 		Texture texture = game.assets.get("texture-maps/venus.gif", Texture.class);
 		TextureAttribute venus = new TextureAttribute(TextureAttribute.Diffuse, texture);
 		sphere = modelBuilder.createSphere(2f, 2f, 2f, 40, 40, new Material(venus), Usage.Normal | Usage.Position | Usage.TextureCoordinates);
+//		sphere = modelBuilder.createBox(2f, 2f, 2f, new Material(), Usage.Normal | Usage.Position | Usage.TextureCoordinates);
 
 		for (int x = -5; x <= 5; x += 5) {
 			for (int z = -5; z <= 5; z += 5) {
@@ -134,12 +135,12 @@ public class GameplayScreen extends AbstractScreen {
 		renderable.worldTransform.idt();
 
 		String data = "com/byronh/space3d/shaders";
-		String vert1 = Gdx.files.classpath(data + "/default.vert").readString();
-		String frag1 = Gdx.files.classpath(data + "/default.frag").readString();
+		String vert1 = Gdx.files.classpath(data + "/default.vert.glsl").readString();
+		String frag1 = Gdx.files.classpath(data + "/default.frag.glsl").readString();
 		shader1 = new DefaultShader(renderable, new DefaultShader.Config(vert1, frag1));
 		shader1.init();
 
-		shader2 = new PlanetShader();
+		shader2 = new ToonShader();
 		shader2.init();
 
 		fb1 = new FrameBuffer(Pixmap.Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
@@ -181,7 +182,7 @@ public class GameplayScreen extends AbstractScreen {
 			modelBatch.begin(cam);
 			for (ModelInstance instance : instances) {
 				instance.transform.rotate(Vector3.Y, 1.5f * delta);
-				modelBatch.render(instance, shader2);
+				modelBatch.render(instance, environment, shader2);
 			}
 			modelBatch.end();
 		}
@@ -193,7 +194,7 @@ public class GameplayScreen extends AbstractScreen {
 		
 		// Blend both frame buffers
 		spriteBatch.begin();
-		spriteBatch.draw(region1, 0, 0);
+//		spriteBatch.draw(region1, 0, 0);
 		spriteBatch.setColor(1.0f, 1.0f, 1.0f, 0.5f);
 		spriteBatch.draw(region2, 0, 0);
 		spriteBatch.end();
