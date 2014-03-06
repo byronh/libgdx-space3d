@@ -7,6 +7,8 @@ import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
@@ -47,11 +49,16 @@ public class GameplayScreen extends AbstractScreen {
 	private Model sphere;
 	public Array<ModelInstance> instances = new Array<ModelInstance>();
 	private Skin skin;
-	
+
 	private Renderable renderable;
 	private Shader shader1, shader2;
-	
-	private FrameBuffer fb;
+
+	private FrameBuffer fb1, fb2;
+	private SpriteBatch spriteBatch;
+	private Texture pass1, pass2;
+	private TextureRegion region1, region2;
+
+	TextButton button;
 
 	public GameplayScreen(Space3DGame game) {
 		super(game);
@@ -60,12 +67,13 @@ public class GameplayScreen extends AbstractScreen {
 	@Override
 	public void show() {
 		super.show();
-		
+
 		game.log("Initializing 3D game world");
 
 		inputMultiplexer = new InputMultiplexer();
 
 		modelBatch = new ModelBatch();
+		spriteBatch = new SpriteBatch(1);
 
 		skin = game.assets.get("ui/Holo-dark-hdpi.json", Skin.class);
 
@@ -75,8 +83,8 @@ public class GameplayScreen extends AbstractScreen {
 
 		environment = new Environment();
 		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, .10f, .10f, .10f, 1f));
-		environment.add(new PointLight().set(1f, 1f, 1f, -15f, 1.5f, 15f, 2000f));
-//		environment.add(new DirectionalLight().set(1f, 1f, 1f, -1f, 0f, -0.2f));
+		environment.add(new PointLight().set(1f, 1f, 1f, -15f, 1.5f, 15f, 1000f));
+		// environment.add(new DirectionalLight().set(1f, 1f, 1f, -1f, 0f, -0.2f));
 
 		cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		cam.position.set(7.5f, 1.5f, 7.5f);
@@ -84,13 +92,13 @@ public class GameplayScreen extends AbstractScreen {
 		cam.near = 0.1f;
 		cam.far = 2000f;
 		cam.update();
-		
+
 		KeyboardController keyboardController = new KeyboardController(game);
 		camController = new CameraInputController(cam);
 		camController.scrollFactor = -0.05f;
 
-		final TextButton button = new TextButton("Click me", skin, "default");
-		button.setPosition(100, 100);
+		button = new TextButton("Click me", skin, "default");
+		button.setPosition(10, 10);
 		button.addListener(new ClickListener() {
 
 			@Override
@@ -99,64 +107,95 @@ public class GameplayScreen extends AbstractScreen {
 			}
 		});
 		stage.addActor(button);
-		
+
 		inputMultiplexer.addProcessor(keyboardController);
 		inputMultiplexer.addProcessor(stage);
 		inputMultiplexer.addProcessor(camController);
 		Gdx.input.setInputProcessor(inputMultiplexer);
-		
-		/////
-		
+
+		// ///
+
 		ModelBuilder modelBuilder = new ModelBuilder();
 		Texture texture = game.assets.get("texture-maps/venus.gif", Texture.class);
 		TextureAttribute venus = new TextureAttribute(TextureAttribute.Diffuse, texture);
 		sphere = modelBuilder.createSphere(2f, 2f, 2f, 40, 40, new Material(venus), Usage.Normal | Usage.Position | Usage.TextureCoordinates);
-//		planet = new ModelInstance(sphere);
-		
-        for (int x = -5; x <= 5; x+=5) {
-        	for (int z = -5; z<=5; z+=5) {
-        		ModelInstance instance = new ModelInstance(sphere, x, 0, z);
-        		instances.add(instance);
-        	}
-        }
-        
+
+		for (int x = -5; x <= 5; x += 5) {
+			for (int z = -5; z <= 5; z += 5) {
+				ModelInstance instance = new ModelInstance(sphere, x, 0, z);
+				instances.add(instance);
+			}
+		}
+
 		renderable = new Renderable();
 		NodePart blockPart = instances.first().nodes.first().parts.first();
 		blockPart.setRenderable(renderable);
 		renderable.environment = environment;
 		renderable.worldTransform.idt();
-        
+
 		String data = "com/byronh/space3d/shaders";
-		String vert1 = Gdx.files.classpath(data+"/default.vert").readString();
-		String frag1 = Gdx.files.classpath(data+"/default.frag").readString();
+		String vert1 = Gdx.files.classpath(data + "/default.vert").readString();
+		String frag1 = Gdx.files.classpath(data + "/default.frag").readString();
 		shader1 = new DefaultShader(renderable, new DefaultShader.Config(vert1, frag1));
 		shader1.init();
-        
-        shader2 = new PlanetShader();
-        shader2.init();
-		
-		fb = new FrameBuffer(Pixmap.Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
+
+		shader2 = new PlanetShader();
+		shader2.init();
+
+		fb1 = new FrameBuffer(Pixmap.Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
+		fb2 = new FrameBuffer(Pixmap.Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
 	}
 
 	@Override
 	public void render(float delta) {
 		super.render(delta);
-		
+
 		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		Gdx.gl.glClearColor(0, 0, 0, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT
-				| (Gdx.graphics.getBufferFormat().coverageSampling ? GL20.GL_COVERAGE_BUFFER_BIT_NV : 0));
-		
+
+		button.setText(Integer.toString(Gdx.graphics.getFramesPerSecond()));
+
 		camController.update();
 
-		
-		modelBatch.begin(cam);
-		for (ModelInstance instance : instances) {
-			instance.transform.rotate(Vector3.Y, 1.5f * delta);
-        	modelBatch.render(instance, environment, shader1);
+		fb1.begin();
+		{
+			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT
+					| (Gdx.graphics.getBufferFormat().coverageSampling ? GL20.GL_COVERAGE_BUFFER_BIT_NV : 0));
+			modelBatch.begin(cam);
+			for (ModelInstance instance : instances) {
+				instance.transform.rotate(Vector3.Y, 1.5f * delta);
+				modelBatch.render(instance, environment, shader1);
+			}
+			modelBatch.end();
 		}
-		modelBatch.end();
+		fb1.end();
+
+		pass1 = fb1.getColorBufferTexture();
+		region1 = new TextureRegion(pass1);
+		region1.flip(false, true);
 		
+		fb2.begin();
+		{
+			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT
+					| (Gdx.graphics.getBufferFormat().coverageSampling ? GL20.GL_COVERAGE_BUFFER_BIT_NV : 0));
+			modelBatch.begin(cam);
+			for (ModelInstance instance : instances) {
+				instance.transform.rotate(Vector3.Y, 1.5f * delta);
+				modelBatch.render(instance, shader2);
+			}
+			modelBatch.end();
+		}
+		fb2.end();
+		
+		pass2 = fb2.getColorBufferTexture();
+		region2 = new TextureRegion(pass2);
+		region2.flip(false, true);
+
+		spriteBatch.begin();
+		spriteBatch.draw(region1, 0, 0);
+		spriteBatch.setColor(1.0f, 1.0f, 1.0f, 0.5f);
+		spriteBatch.draw(region2, 0, 0);
+		spriteBatch.end();
 
 		stage.act(delta);
 		stage.draw();
