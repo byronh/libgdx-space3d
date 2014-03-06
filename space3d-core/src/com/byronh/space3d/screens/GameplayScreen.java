@@ -124,7 +124,6 @@ public class GameplayScreen extends AbstractScreen {
 		TextureAttribute venus = TextureAttribute.createDiffuse(texture);
 		ColorAttribute spec = ColorAttribute.createSpecular(0.7f, 0.7f, 0.5f, 1f);
 		sphere = modelBuilder.createSphere(3f, 3f, 3f, 60, 60, new Material(venus, spec), Usage.Normal | Usage.Position | Usage.TextureCoordinates);
-//		sphere = modelBuilder.createBox(2f, 2f, 2f,  new Material(venus, spec), Usage.Normal | Usage.Position | Usage.TextureCoordinates);
 
 		for (int x = -50; x <= 50; x += 50) {
 			for (int z = -50; z <= 50; z += 50) {
