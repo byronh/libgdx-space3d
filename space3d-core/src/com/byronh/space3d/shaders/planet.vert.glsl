@@ -100,7 +100,7 @@ uniform mat4 u_bones[numBones];
 #ifdef shininessFlag
 uniform float u_shininess;
 #else
-const float u_shininess = 8.0;
+const float u_shininess = 20.0;
 #endif // shininessFlag
 
 #ifdef blendedFlag
@@ -177,6 +177,7 @@ varying vec3 v_ambientLight;
 
 
 varying vec3 v_viewDir;
+varying vec4 v_viewDist;
 
 
 void main() {
@@ -327,5 +328,6 @@ void main() {
 	
 	
 	v_viewDir = viewVec;
+	v_viewDist = u_cameraPosition - pos;
 	
 }

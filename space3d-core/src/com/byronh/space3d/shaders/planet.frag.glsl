@@ -100,7 +100,7 @@ varying float v_fog;
 
 
 varying vec3 v_viewDir;
-
+varying vec4 v_viewDist;
 
 
 void main() {
