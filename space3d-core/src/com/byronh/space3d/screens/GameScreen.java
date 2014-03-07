@@ -39,7 +39,7 @@ import com.byronh.space3d.graphics.MultiPassShader;
 import com.byronh.space3d.input.KeyboardController;
 
 
-public class GameplayScreen extends AbstractScreen {
+public class GameScreen extends AbstractScreen {
 
 	Stage stage;
 	Image image;
@@ -64,7 +64,7 @@ public class GameplayScreen extends AbstractScreen {
 
 	TextButton button;
 
-	public GameplayScreen(Space3DGame game) {
+	public GameScreen(Space3DGame game) {
 		super(game);
 	}
 
@@ -157,8 +157,6 @@ public class GameplayScreen extends AbstractScreen {
 
 		// shader2 = new PlanetShader();
 		// shader2.init();
-		
-		game.log(Gdx.gl.glGetString(GL20.GL_VERSION));
 
 		fb1 = new FrameBuffer(Pixmap.Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
 		fb2 = new FrameBuffer(Pixmap.Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);

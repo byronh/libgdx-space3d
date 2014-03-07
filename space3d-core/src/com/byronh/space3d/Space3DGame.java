@@ -23,6 +23,7 @@ public class Space3DGame extends Game {
 	GameConfig config = new GameConfig();
 
 	public AssetManager assets;
+	public Simulation simulation;
 
 	public LoadingScreen loadingScreen;
 	public GameplayScreen gameplayScreen;
