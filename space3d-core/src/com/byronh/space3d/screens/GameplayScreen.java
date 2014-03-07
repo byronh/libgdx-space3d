@@ -23,7 +23,6 @@ import com.badlogic.gdx.graphics.g3d.environment.PointLight;
 import com.badlogic.gdx.graphics.g3d.model.NodePart;
 import com.badlogic.gdx.graphics.g3d.shaders.DefaultShader;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
-import com.badlogic.gdx.graphics.g3d.utils.DefaultShaderProvider;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.Vector3;
@@ -35,6 +34,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.byronh.space3d.Space3DGame;
+import com.byronh.space3d.graphics.Bloom;
 import com.byronh.space3d.graphics.MultiPassShader;
 import com.byronh.space3d.input.KeyboardController;
 
@@ -62,6 +62,8 @@ public class GameplayScreen extends AbstractScreen {
 	private Texture pass1, pass2;
 	private TextureRegion region1, region2;
 
+	private Bloom bloom;
+
 	TextButton button;
 
 	public GameplayScreen(Space3DGame game) {
@@ -86,7 +88,7 @@ public class GameplayScreen extends AbstractScreen {
 		// stage.addActor(image);
 
 		environment = new Environment();
-		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, .1f, .1f, .1f, 1f));
+		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, .2f, .2f, .2f, 1f));
 		environment.add(new PointLight().set(1f, 1f, 1f, -15f, -5.5f, 15f, 300f));
 		// environment.add(new DirectionalLight().set(0.5f, 0.5f, 0.5f, -1f, 0f,
 		// -0.2f));
@@ -129,10 +131,11 @@ public class GameplayScreen extends AbstractScreen {
 		TextureAttribute venus = TextureAttribute.createDiffuse(texture);
 		ColorAttribute spec = ColorAttribute.createSpecular(0.7f, 0.7f, 0.5f, 1f);
 		FloatAttribute shine = FloatAttribute.createShininess(8.0f);
-		sphere = modelBuilder.createSphere(3f, 3f, 3f, 60, 60, new Material(venus, spec, shine), Usage.Normal | Usage.Position | Usage.TextureCoordinates);
+		sphere = modelBuilder.createSphere(3f, 3f, 3f, 60, 60, new Material(venus, spec, shine), Usage.Normal | Usage.Position
+				| Usage.TextureCoordinates);
 
-		for (int x = -20; x <= 20; x += 20) {
-			for (int z = -20; z <= 20; z += 20) {
+		for (int x = -5; x <= 5; x += 5) {
+			for (int z = -5; z <= 5; z += 5) {
 				ModelInstance instance = new ModelInstance(sphere, x, 0, z);
 				instances.add(instance);
 			}
@@ -150,33 +153,42 @@ public class GameplayScreen extends AbstractScreen {
 		shader1 = new MultiPassShader(renderable, new DefaultShader.Config(vert1, frag1));
 		shader1.init();
 
-//		 DefaultShaderProvider provider = new 
-//		 DefaultShaderProvider(Gdx.files.classpath(data +
-//		 "/planet.vert.glsl").readString(), Gdx.files.classpath(
-//		 data + "/planet.frag.glsl").readString());
+		// DefaultShaderProvider provider = new
+		// DefaultShaderProvider(Gdx.files.classpath(data +
+		// "/planet.vert.glsl").readString(), Gdx.files.classpath(
+		// data + "/planet.frag.glsl").readString());
 
 		// shader2 = new PlanetShader();
 		// shader2.init();
-		
+
 		game.log(Gdx.gl.glGetString(GL20.GL_VERSION));
 
 		fb1 = new FrameBuffer(Pixmap.Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
 		fb2 = new FrameBuffer(Pixmap.Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
+
+		bloom = new Bloom();
+		// Defaults
+		// setBloomIntesity(2.5f);
+		// setOriginalIntesity(0.8f);
+		// setTreshold(0.5f);
+		bloom.setBloomIntesity(1.0f);
 	}
 
 	@Override
 	public void render(float delta) {
 		super.render(delta);
-
+		//Gdx.gl20.glBindFramebuffer(target, framebuffer);
 		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		Gdx.gl.glClearColor(0, 0, 0, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT
-				| (Gdx.graphics.getBufferFormat().coverageSampling ? GL20.GL_COVERAGE_BUFFER_BIT_NV : 0));
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+				//| (Gdx.graphics.getBufferFormat().coverageSampling ? GL20.GL_COVERAGE_BUFFER_BIT_NV : 0));
 		modelBatch.begin(cam);
 
 		button.setText(Integer.toString(Gdx.graphics.getFramesPerSecond()));
 
 		camController.update();
+
+		bloom.capture();
 
 		for (ModelInstance instance : instances) {
 			// Interpolation.linear.apply(start, end, a)
@@ -185,26 +197,28 @@ public class GameplayScreen extends AbstractScreen {
 		}
 		modelBatch.end();
 
-//		fb2.begin();
-//		{
-//			Gdx.gl.glClearColor(1, 0, 0, 1);
-//			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
-//			modelBatch.begin(cam);
-//			for (ModelInstance instance : instances) {
-//				modelBatch.render(instance, environment, shader1);
-//			}
-//			modelBatch.end();
-//		}
-//		fb2.end();
-//
-//		pass2 = fb2.getColorBufferTexture();
-//
-//		Sprite s = new Sprite(new TextureRegion(pass2));
-//
-//		spriteBatch.begin();
-//		spriteBatch.setColor(1f, 1f, 1f, 0.5f);
-//		spriteBatch.draw(s, 300f, 100f, 100f, -100f);
-//		spriteBatch.end();
+		bloom.render();
+
+		// fb2.begin();
+		// {
+		// Gdx.gl.glClearColor(1, 0, 0, 1);
+		// Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+		// modelBatch.begin(cam);
+		// for (ModelInstance instance : instances) {
+		// modelBatch.render(instance, environment, shader1);
+		// }
+		// modelBatch.end();
+		// }
+		// fb2.end();
+		//
+		// pass2 = fb2.getColorBufferTexture();
+		//
+		// Sprite s = new Sprite(new TextureRegion(pass2));
+		//
+		// spriteBatch.begin();
+		// spriteBatch.setColor(1f, 1f, 1f, 0.5f);
+		// spriteBatch.draw(s, 300f, 100f, 100f, -100f);
+		// spriteBatch.end();
 
 		stage.act(delta);
 		stage.draw();
