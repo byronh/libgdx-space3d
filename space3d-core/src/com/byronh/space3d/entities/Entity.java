@@ -4,7 +4,15 @@ import com.badlogic.gdx.math.Matrix4;
 
 
 public abstract class Entity {
+
+	public Matrix4 worldTransform;
 	
-	public Matrix4 transform;
+	public Entity() {
+		worldTransform = new Matrix4();
+	}
+
+	public Entity(Matrix4 transform) {
+		worldTransform = transform;
+	}
 
 }

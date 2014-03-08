@@ -28,9 +28,11 @@ public class LoadingScreen extends AbstractScreen {
         stage = new Stage();
         
         // Load relevant assets for the next game screen here
-        game.assets.load("texture-maps/venus.gif", Texture.class);
-        game.assets.load("texture-maps/starscape.png", Texture.class);
         game.assets.load("ui/Holo-dark-hdpi.json", Skin.class);
+        game.assets.load("texture-maps/venus.gif", Texture.class);
+        game.assets.load("texture-maps/earth1.jpg", Texture.class);
+//        game.assets.load("texture-maps/starscape.png", Texture.class);
+        
     }
 
     @Override

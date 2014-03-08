@@ -134,14 +134,15 @@ public class GameplayScreen extends AbstractScreen {
 		Material material = new Material(venus, spec, shine);
 		// BlendingAttribute blend = new BlendingAttribute(0.5f);
 		// material.set(blend);
-//		sphere = modelBuilder.createSphere(3f, 3f, 3f, 60, 60, material, Usage.Normal | Usage.Position | Usage.TextureCoordinates);
-		sphere = modelBuilder.createBox(3f, 3f, 3f, material, Usage.Normal | Usage.Position | Usage.TextureCoordinates);
-		for (int x = -100; x <= 200; x += 5) {
-			for (int z = -100; z <= 200; z += 5) {
+		sphere = modelBuilder.createSphere(3f, 3f, 3f, 60, 60, material, Usage.Normal | Usage.Position | Usage.TextureCoordinates);
+//		sphere = modelBuilder.createBox(3f, 3f, 3f, material, Usage.Normal | Usage.Position | Usage.TextureCoordinates);
+//		for (int x = -100; x <= 200; x += 5) {
+//			for (int z = -100; z <= 200; z += 5) {
+		int x = 0, z = 0;
 				ModelInstance instance = new ModelInstance(sphere, x, 0, z);
 				instances.add(instance);
-			}
-		}
+//			}
+//		}
 
 		renderable = new Renderable();
 		NodePart blockPart = instances.first().nodes.first().parts.first();

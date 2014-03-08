@@ -3,13 +3,13 @@ package com.byronh.space3d.entities;
 import com.badlogic.gdx.math.Matrix4;
 
 
-public abstract class Planet extends Entity {
+public class TerranPlanet extends Planet {
 
-	public Planet() {
+	public TerranPlanet() {
 		super();
 	}
 
-	public Planet(Matrix4 transform) {
+	public TerranPlanet(Matrix4 transform) {
 		super(transform);
 	}
 
