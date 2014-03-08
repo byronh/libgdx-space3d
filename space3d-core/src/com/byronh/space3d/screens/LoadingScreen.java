@@ -51,6 +51,11 @@ public class LoadingScreen extends AbstractScreen {
         stage.act();
         stage.draw();
     }
+    
+    @Override
+    public void dispose() {
+    	stage.dispose();
+    }
 
 	@Override
 	public void resize(int width, int height) {

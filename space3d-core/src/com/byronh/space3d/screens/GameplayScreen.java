@@ -90,9 +90,9 @@ public class GameplayScreen extends AbstractScreen {
 		
 		Gdx.gl20.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		Gdx.gl20.glClearColor(0, 0, 0, 1);
-		Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT//);
-		 | (Gdx.graphics.getBufferFormat().coverageSampling ?
-		 GL20.GL_COVERAGE_BUFFER_BIT_NV : 0));
+		Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+//		 | (Gdx.graphics.getBufferFormat().coverageSampling ?
+//		 GL20.GL_COVERAGE_BUFFER_BIT_NV : 0));
 		
 		camController.update();
 		renderer.render(cam);

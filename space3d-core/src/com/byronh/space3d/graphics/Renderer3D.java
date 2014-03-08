@@ -80,7 +80,7 @@ public class Renderer3D implements SimulationListener {
 		space = new ModelInstance(sphere);
 		space.transform.scl(-10000f);
 		space.materials.first().set(spaceTexture);
-		addModelInstance(space, "default");
+		//addModelInstance(space, "default");
 
 		// Initialize post-processing effects
 		// bloom.setTreshold(0.1f);
@@ -100,6 +100,7 @@ public class Renderer3D implements SimulationListener {
 				batch.render(mi, environments.get(shaderName));
 			}
 			batch.end();
+			batch.dispose();
 		}
 		// bloom.render();
 

@@ -13,7 +13,6 @@ public class Main {
 		cfg.height = 864;
 		cfg.vSyncEnabled = true;
 		cfg.resizable = false;
-		cfg.samples = 8;
 		
 		new LwjglApplication(new Space3DGame(), cfg);
 	}
