@@ -40,7 +40,11 @@ public class Renderer3D implements SimulationListener {
 
 	private Model sphere;
 
-	TextureAttribute desertTexture, terranTexture;
+	private TextureAttribute desertTexture, terranTexture;
+
+	private Bloom bloom = new Bloom();
+
+	private ModelInstance space;
 
 	public Renderer3D(AssetManager assetManager) {
 		assets = assetManager;
@@ -48,7 +52,7 @@ public class Renderer3D implements SimulationListener {
 
 	public void init() {
 
-		// Initialize environments
+		// Initialize lights
 		Environment planetLighting = new Environment();
 		planetLighting.set(new ColorAttribute(ColorAttribute.AmbientLight, .1f, .1f, .1f, 1f));
 		planetLighting.add(new PointLight().set(1f, 1f, 1f, -15f, -5.5f, 15f, 300f));
@@ -68,14 +72,24 @@ public class Renderer3D implements SimulationListener {
 		sphere = modelBuilder.createSphere(3f, 3f, 3f, 50, 50, new Material(spec, shine), Usage.Normal | Usage.Position | Usage.TextureCoordinates);
 
 		// Initialize textures
+		TextureAttribute spaceTexture = TextureAttribute.createDiffuse(assets.get("texture-maps/galaxy_starfield.png", Texture.class));
 		desertTexture = TextureAttribute.createDiffuse(assets.get("texture-maps/venus.gif", Texture.class));
 		terranTexture = TextureAttribute.createDiffuse(assets.get("texture-maps/earth1.jpg", Texture.class));
 
-		// Initialize other stuff
+		// Initialize sky box
+		space = new ModelInstance(sphere);
+		space.transform.scl(-10000f);
+		space.materials.first().set(spaceTexture);
+		addModelInstance(space, "default");
+
+		// Initialize post-processing effects
+		// bloom.setTreshold(0.1f);
+		bloom.setBloomIntesity(0.8f);
 	}
 
 	public void render(Camera cam) {
 
+		// bloom.capture();
 		for (String shaderName : shaders) {
 			if (!modelInstances.containsKey(shaderName)) {
 				continue;
@@ -87,6 +101,7 @@ public class Renderer3D implements SimulationListener {
 			}
 			batch.end();
 		}
+		// bloom.render();
 
 	}
 
@@ -99,12 +114,7 @@ public class Renderer3D implements SimulationListener {
 			} else if (entity instanceof TerranPlanet) {
 				planet.materials.first().set(terranTexture);
 			}
-			if (!modelInstances.containsKey("planet")) {
-				modelInstances.put("planet", new Array<ModelInstance>());
-				batches.put("planet", new ModelBatch(shaderProviders.get("planet")));
-			}
-			modelInstances.get("planet").add(planet);
-			Gdx.app.log("INFO", "Adding planet");
+			addModelInstance(planet, "planet");
 		}
 	}
 
@@ -112,6 +122,14 @@ public class Renderer3D implements SimulationListener {
 	public void onEntityRemoved(Entity entity) {
 		// TODO Auto-generated method stub
 
+	}
+	
+	private void addModelInstance(ModelInstance modelInstance, String shaderName) {
+		if (!modelInstances.containsKey(shaderName)) {
+			modelInstances.put(shaderName, new Array<ModelInstance>());
+			batches.put(shaderName, new ModelBatch(shaderProviders.get(shaderName)));
+		}
+		modelInstances.get(shaderName).add(modelInstance);
 	}
 
 }

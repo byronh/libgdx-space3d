@@ -43,7 +43,7 @@ public class GameplayScreen extends AbstractScreen {
 		cam.position.set(7.5f, 1.5f, 7.5f);
 		cam.lookAt(0, 0, 0);
 		cam.near = 0.1f;
-		cam.far = 2000f;
+		cam.far = 25000f;
 		cam.update();
 		
 		renderer = new Renderer3D(game.assets);
@@ -90,9 +90,9 @@ public class GameplayScreen extends AbstractScreen {
 		
 		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		Gdx.gl.glClearColor(0, 0, 0, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
-		// | (Gdx.graphics.getBufferFormat().coverageSampling ?
-		// GL20.GL_COVERAGE_BUFFER_BIT_NV : 0));
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT//);
+		 | (Gdx.graphics.getBufferFormat().coverageSampling ?
+		 GL20.GL_COVERAGE_BUFFER_BIT_NV : 0));
 		
 		camController.update();
 		renderer.render(cam);
