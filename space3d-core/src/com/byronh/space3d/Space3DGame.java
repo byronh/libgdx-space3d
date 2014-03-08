@@ -7,7 +7,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.utils.Json;
 import com.byronh.space3d.entities.Simulation;
 import com.byronh.space3d.screens.GameplayScreen;
@@ -33,10 +33,10 @@ public class Space3DGame extends Game {
 	public void create() {
 
 		loadConfig();
+		
+		log(Gdx.gl.glGetString(GL20.GL_VERSION));
 
 		assets = new AssetManager();
-		
-		ShaderProgram.pedantic = false;
 
 		loadingScreen = new LoadingScreen(this);
 		gameplayScreen = new GameplayScreen(this);

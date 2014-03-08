@@ -20,7 +20,12 @@ public class Simulation {
 	}
 
 	public void init() {
-		addEntity(new TerranPlanet());
+		DesertPlanet mars = new DesertPlanet();
+		TerranPlanet earth = new TerranPlanet();
+		earth.worldTransform.setToTranslationAndScaling(-15f, 0.5f, 0f, 2f, 2f, 2f);
+		
+		addEntity(mars);
+		addEntity(earth);
 	}
 	
 	public void addListener(SimulationListener listener) {

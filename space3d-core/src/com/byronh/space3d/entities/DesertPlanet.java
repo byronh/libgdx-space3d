@@ -9,4 +9,8 @@ public class DesertPlanet extends Planet {
 		super(transform);
 	}
 
+	public DesertPlanet() {
+		super();
+	}
+
 }
