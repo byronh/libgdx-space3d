@@ -22,9 +22,10 @@ import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.RenderContext;
 import com.badlogic.gdx.graphics.g3d.utils.ShaderProvider;
 import com.badlogic.gdx.utils.ObjectMap;
-import com.byronh.space3d.Simulation;
 import com.byronh.space3d.Space3DGame;
-import com.byronh.space3d.entities.GameObject;
+import com.byronh.space3d.entities.Entity;
+import com.byronh.space3d.entities.Simulation;
+import com.byronh.space3d.util.Tuple;
 
 
 public class Renderer3D {
@@ -32,13 +33,12 @@ public class Renderer3D {
 	private final String shaderDir = "com/byronh/space3d/shaders/";
 	private final String[] shaders = { "default", "planet" };
 
-	private ObjectMap<GameObject, ModelInstance> objects = new ObjectMap<GameObject, ModelInstance>();
+	private ObjectMap<String, Tuple<Entity, ModelInstance>> objects = new ObjectMap<String, Tuple<Entity, ModelInstance>>();
 	private ObjectMap<String, ShaderProvider> shaderProviders = new ObjectMap<String, ShaderProvider>();
 	private ObjectMap<String, Environment> environments = new ObjectMap<String, Environment>();
 	
 	private Space3DGame game;
 	private Simulation sim;
-	private RenderContext renderContext;
 	private ModelBatch modelBatch;
 	private SpriteBatch spriteBatch;
 	
@@ -56,9 +56,7 @@ public class Renderer3D {
 		planetLighting.set(new ColorAttribute(ColorAttribute.AmbientLight, .1f, .1f, .1f, 1f));
 		planetLighting.add(new PointLight().set(1f, 1f, 1f, -15f, -5.5f, 15f, 300f));
 		environments.put("planet", planetLighting);
-		
 		// Initialize shaders
-		renderContext = new RenderContext(new DefaultTextureBinder(DefaultTextureBinder.WEIGHTED, 1));
 		for (String shaderName : shaders) {
 			shaderProviders.put(shaderName, new DefaultShaderProvider(Gdx.files.classpath(shaderDir + shaderName + ".vert.glsl").readString(), Gdx.files
 					.classpath(shaderDir + shaderName + ".frag.glsl").readString()));
@@ -73,20 +71,20 @@ public class Renderer3D {
 		sphere = modelBuilder.createSphere(3f, 3f, 3f, 50, 50, new Material(venus, spec, shine), Usage.Normal | Usage.Position | Usage.TextureCoordinates);
 		
 		// Initialize other stuff
-		//modelBatch = new ModelBatch();
+		modelBatch = new ModelBatch();
 		spriteBatch = new SpriteBatch();
 	}
 	
 	public void render(Simulation sim, Camera cam) {
 		
-		renderContext.begin();
+		modelBatch.begin(cam);
 		for (String shaderName : shaders) {
 			
 			Shader s = shaderProviders.get(shaderName).getShader(new Renderable());
 			//renderContext.
 			
 		}
-		renderContext.end();
+		modelBatch.end();
 		
 		spriteBatch.begin();
 		spriteBatch.end();

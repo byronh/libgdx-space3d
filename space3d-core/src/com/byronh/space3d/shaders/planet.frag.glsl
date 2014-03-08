@@ -186,6 +186,6 @@ void main() {
 	
 	float intensity = pow(0.25 + dot(normalize(v_viewDir), normalize(v_normal)), -2.0);
 		
-	gl_FragColor = (vec4(gl_FragColor.r, gl_FragColor.g, gl_FragColor.b, 1.0) * intensity);
+	gl_FragColor = vec4(gl_FragColor.rgb * intensity, gl_FragColor.a);
 
 }

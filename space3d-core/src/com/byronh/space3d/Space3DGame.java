@@ -9,6 +9,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.utils.Json;
+import com.byronh.space3d.entities.Simulation;
 import com.byronh.space3d.screens.GameplayScreen;
 import com.byronh.space3d.screens.LoadingScreen;
 

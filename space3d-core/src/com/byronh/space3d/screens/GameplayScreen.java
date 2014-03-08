@@ -23,6 +23,7 @@ import com.badlogic.gdx.graphics.g3d.environment.PointLight;
 import com.badlogic.gdx.graphics.g3d.model.NodePart;
 import com.badlogic.gdx.graphics.g3d.shaders.DefaultShader;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
+import com.badlogic.gdx.graphics.g3d.utils.DefaultShaderProvider;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.Vector3;
@@ -35,7 +36,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.byronh.space3d.Space3DGame;
 import com.byronh.space3d.graphics.Bloom;
-import com.byronh.space3d.graphics.MultiPassShader;
 import com.byronh.space3d.input.KeyboardController;
 
 
@@ -131,11 +131,13 @@ public class GameplayScreen extends AbstractScreen {
 		TextureAttribute venus = TextureAttribute.createDiffuse(texture);
 		ColorAttribute spec = ColorAttribute.createSpecular(0.7f, 0.7f, 0.5f, 1f);
 		FloatAttribute shine = FloatAttribute.createShininess(8.0f);
-		sphere = modelBuilder.createSphere(3f, 3f, 3f, 60, 60, new Material(venus, spec, shine), Usage.Normal | Usage.Position
-				| Usage.TextureCoordinates);
-
-		for (int x = -5; x <= 5; x += 5) {
-			for (int z = -5; z <= 5; z += 5) {
+		Material material = new Material(venus, spec, shine);
+		// BlendingAttribute blend = new BlendingAttribute(0.5f);
+		// material.set(blend);
+//		sphere = modelBuilder.createSphere(3f, 3f, 3f, 60, 60, material, Usage.Normal | Usage.Position | Usage.TextureCoordinates);
+		sphere = modelBuilder.createBox(3f, 3f, 3f, material, Usage.Normal | Usage.Position | Usage.TextureCoordinates);
+		for (int x = -100; x <= 200; x += 5) {
+			for (int z = -100; z <= 200; z += 5) {
 				ModelInstance instance = new ModelInstance(sphere, x, 0, z);
 				instances.add(instance);
 			}
@@ -150,13 +152,11 @@ public class GameplayScreen extends AbstractScreen {
 		String data = "com/byronh/space3d/shaders";
 		String vert1 = Gdx.files.classpath(data + "/planet.vert.glsl").readString();
 		String frag1 = Gdx.files.classpath(data + "/planet.frag.glsl").readString();
-		shader1 = new MultiPassShader(renderable, new DefaultShader.Config(vert1, frag1));
+		shader1 = new DefaultShader(renderable, new DefaultShader.Config(vert1, frag1));
 		shader1.init();
 
-		// DefaultShaderProvider provider = new
-		// DefaultShaderProvider(Gdx.files.classpath(data +
-		// "/planet.vert.glsl").readString(), Gdx.files.classpath(
-		// data + "/planet.frag.glsl").readString());
+		DefaultShaderProvider provider = new DefaultShaderProvider(Gdx.files.classpath(data + "/planet.vert.glsl").readString(), Gdx.files.classpath(
+				data + "/planet.frag.glsl").readString());
 
 		// shader2 = new PlanetShader();
 		// shader2.init();
@@ -177,26 +177,25 @@ public class GameplayScreen extends AbstractScreen {
 	@Override
 	public void render(float delta) {
 		super.render(delta);
-		//Gdx.gl20.glBindFramebuffer(target, framebuffer);
+		// Gdx.gl20.glBindFramebuffer(target, framebuffer);
 		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
-				//| (Gdx.graphics.getBufferFormat().coverageSampling ? GL20.GL_COVERAGE_BUFFER_BIT_NV : 0));
-		modelBatch.begin(cam);
+		// | (Gdx.graphics.getBufferFormat().coverageSampling ?
+		// GL20.GL_COVERAGE_BUFFER_BIT_NV : 0));
 
 		button.setText(Integer.toString(Gdx.graphics.getFramesPerSecond()));
 
 		camController.update();
 
 		bloom.capture();
-
+		modelBatch.begin(cam);
 		for (ModelInstance instance : instances) {
 			// Interpolation.linear.apply(start, end, a)
 			instance.transform.rotate(Vector3.Y, 2.5f * delta);
 			modelBatch.render(instance, environment, shader1);
 		}
 		modelBatch.end();
-
 		bloom.render();
 
 		// fb2.begin();
