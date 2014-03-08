@@ -220,8 +220,8 @@ public class Bloom {
 		if (!capturing) {
 			capturing = true;
 			frameBuffer.begin();
-			Gdx.gl.glClearColor(r, g, b, a);
-			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+			Gdx.gl20.glClearColor(r, g, b, a);
+			Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
 		}
 	}
@@ -253,15 +253,15 @@ public class Bloom {
 			frameBuffer.end();
 		}
 
-		Gdx.gl.glDisable(GL20.GL_BLEND);
-		Gdx.gl.glDisable(GL20.GL_DEPTH_TEST);
-		Gdx.gl.glDepthMask(false);
+		Gdx.gl20.glDisable(GL20.GL_BLEND);
+		Gdx.gl20.glDisable(GL20.GL_DEPTH_TEST);
+		Gdx.gl20.glDepthMask(false);
 
 		gaussianBlur();
 
 		if (blending) {
-			Gdx.gl.glEnable(GL20.GL_BLEND);
-			Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+			Gdx.gl20.glEnable(GL20.GL_BLEND);
+			Gdx.gl20.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 		}
 
 		pingPongTex1.bind(1);
