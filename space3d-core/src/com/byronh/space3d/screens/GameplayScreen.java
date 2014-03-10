@@ -12,19 +12,21 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.byronh.space3d.Space3DGame;
 import com.byronh.space3d.entities.Simulation;
+import com.byronh.space3d.graphics.DebugRenderer;
 import com.byronh.space3d.graphics.Renderer3D;
 import com.byronh.space3d.input.KeyboardController;
 
 
 public class GameplayScreen extends AbstractScreen {
-	
+
 	Simulation sim;
 	Renderer3D renderer;
+	DebugRenderer debugRenderer;
 
 	private InputMultiplexer inputMultiplexer;
 	private PerspectiveCamera cam;
 	private CameraInputController camController;
-	
+
 	private Stage stage;
 	private Skin skin;
 	private TextButton button;
@@ -38,24 +40,25 @@ public class GameplayScreen extends AbstractScreen {
 		super.show();
 
 		game.log("Initializing 3D game world");
-		
+
 		cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		cam.position.set(7.5f, 1.5f, 7.5f);
+		cam.position.set(2.5f, 0.5f, 2.5f);
 		cam.lookAt(0, 0, 0);
 		cam.near = 0.1f;
-		cam.far = 25000f;
+		cam.far = 1005f;
 		cam.update();
-		
-		renderer = new Renderer3D(game.assets);
-		
+
+		renderer = new Renderer3D(game);
+		debugRenderer = new DebugRenderer(game);
 		
 		sim = new Simulation();
 		sim.addListener(renderer);
-		
-		
+		sim.addListener(debugRenderer);
+
 		renderer.init();
+		debugRenderer.init();
 		sim.init();
-		
+
 		game.log("Initializing game controller");
 
 		KeyboardController keyboardController = new KeyboardController(game);
@@ -65,7 +68,7 @@ public class GameplayScreen extends AbstractScreen {
 		stage = new Stage();
 		skin = game.assets.get("ui/Holo-dark-hdpi.json", Skin.class);
 		button = new TextButton("Click me", skin, "default");
-		button.setPosition(10, 10);
+		button.setPosition(10, Gdx.graphics.getHeight() - 100);
 		button.addListener(new ClickListener() {
 
 			@Override
@@ -85,22 +88,21 @@ public class GameplayScreen extends AbstractScreen {
 	@Override
 	public void render(float delta) {
 		super.render(delta);
-		
+
 		sim.mainLoop(delta);
-		
+
 		Gdx.gl20.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		Gdx.gl20.glClearColor(0, 0, 0, 1);
-		Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
-//		 | (Gdx.graphics.getBufferFormat().coverageSampling ?
-//		 GL20.GL_COVERAGE_BUFFER_BIT_NV : 0));
-		
+		Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT
+				| (Gdx.graphics.getBufferFormat().coverageSampling ? GL20.GL_COVERAGE_BUFFER_BIT_NV : 0));
+
 		camController.update();
 		renderer.render(cam);
 
-		button.setText(Integer.toString(Gdx.graphics.getFramesPerSecond()));
-
 		stage.act(delta);
 		stage.draw();
+		
+		debugRenderer.render(cam);
 	}
 
 	@Override

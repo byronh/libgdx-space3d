@@ -18,6 +18,8 @@ public class KeyboardController implements InputProcessor {
 		if (keycode == Input.Keys.ESCAPE) {
 			game.exit();
 			return true;
+		} else if (keycode == Input.Keys.SPACE) {
+			game.config.devMode = !game.config.devMode;
 		}
 		return false;
 	}

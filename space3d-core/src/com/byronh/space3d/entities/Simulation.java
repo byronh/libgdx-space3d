@@ -21,8 +21,10 @@ public class Simulation {
 
 	public void init() {
 		DesertPlanet mars = new DesertPlanet();
+		mars.worldTransform.setToTranslation(0, 0.5f, 0f);
+		
 		TerranPlanet earth = new TerranPlanet();
-		earth.worldTransform.setToTranslationAndScaling(-15f, 0.5f, 0f, 2f, 2f, 2f);
+		earth.worldTransform.setToTranslation(-5f, 0.5f, 0f);
 		
 		addEntity(mars);
 		addEntity(earth);

@@ -9,7 +9,6 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.utils.Json;
-import com.byronh.space3d.entities.Simulation;
 import com.byronh.space3d.screens.GameplayScreen;
 import com.byronh.space3d.screens.LoadingScreen;
 
@@ -21,10 +20,9 @@ import com.byronh.space3d.screens.LoadingScreen;
  */
 public class Space3DGame extends Game {
 
-	GameConfig config = new GameConfig();
+	public GameConfig config = new GameConfig();
 
 	public AssetManager assets;
-	public Simulation simulation;
 
 	public LoadingScreen loadingScreen;
 	public GameplayScreen gameplayScreen;
@@ -83,9 +81,9 @@ public class Space3DGame extends Game {
 	 * @author Byron
 	 *
 	 */
-	private static class GameConfig {
+	public static class GameConfig {
 		
-		private boolean devMode;
+		public boolean devMode;
 	}
 
 	/**

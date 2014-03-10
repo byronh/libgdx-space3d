@@ -32,7 +32,7 @@ public class LoadingScreen extends AbstractScreen {
         game.assets.load("texture-maps/venus.gif", Texture.class);
         game.assets.load("texture-maps/earth1.jpg", Texture.class);
         game.assets.load("texture-maps/galaxy_starfield.png", Texture.class);
-        game.assets.load("texture-maps/galaxy.jpg", Texture.class);
+//        game.assets.load("texture-maps/galaxy.jpg", Texture.class);
         
     }
 
