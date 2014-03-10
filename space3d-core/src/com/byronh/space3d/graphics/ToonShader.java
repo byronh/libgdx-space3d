@@ -26,7 +26,7 @@ public class ToonShader implements Shader {
 	int u_viewTrans;
 	int u_worldTrans;
 	int u_normalMatrix;
-	int u_cameraDir;
+	int u_cameraPos;
 	int u_lightDir;
 
 	private String data = "com/byronh/space3d/shaders";
@@ -43,7 +43,7 @@ public class ToonShader implements Shader {
 		u_viewTrans = program.getUniformLocation("u_viewTrans");
 		u_worldTrans = program.getUniformLocation("u_worldTrans");
 		u_normalMatrix = program.getUniformLocation("u_normalMatrix");
-		u_cameraDir = program.getUniformLocation("u_cameraDir");
+		u_cameraPos = program.getUniformLocation("u_cameraPos");
 		u_lightDir = program.getUniformLocation("u_lightDir");
 	}
 
@@ -59,8 +59,7 @@ public class ToonShader implements Shader {
 		program.begin();
 		program.setUniformMatrix(u_projTrans, camera.combined);
 		program.setUniformMatrix(u_viewTrans, camera.view);
-		program.setUniformf(u_cameraDir, camera.direction);
-		Gdx.app.log("INFO", camera.direction.toString());
+		program.setUniformf(u_cameraPos, camera.position);
 		
 		context.setDepthTest(GL20.GL_LEQUAL);
 		context.setCullFace(GL20.GL_BACK);
