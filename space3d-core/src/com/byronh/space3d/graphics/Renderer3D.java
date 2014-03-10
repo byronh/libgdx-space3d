@@ -42,7 +42,7 @@ public class Renderer3D implements Renderer, SimulationListener {
 	DirectionalShadowLight shadowLight;
 	Bloom bloom;
 
-	ModelBatch mainBatch, shadowBatch;
+	ModelBatch mainBatch, shadowBatch, effectBatch;
 	Model sphere, cube;
 	ModelInstance space, effectsSphere, box;
 
@@ -75,6 +75,7 @@ public class Renderer3D implements Renderer, SimulationListener {
 		// Initialize models
 		mainBatch = new ModelBatch(defaultShaderProvider);
 		shadowBatch = new ModelBatch(new DepthShaderProvider());
+		effectBatch = new ModelBatch();
 
 		ModelBuilder modelBuilder = new ModelBuilder();
 		// ColorAttribute spec = ColorAttribute.createSpecular(0.7f, 0.7f, 0.5f,
@@ -128,8 +129,11 @@ public class Renderer3D implements Renderer, SimulationListener {
 
 		mainBatch.flush();
 		mainBatch.render(space);
-		mainBatch.render(effectsSphere, lights, planetShader);
 		mainBatch.end();
+		
+		effectBatch.begin(cam);
+		effectBatch.render(effectsSphere, lights, planetShader);
+		effectBatch.end();
 		// bloom.render();
 	}
 
