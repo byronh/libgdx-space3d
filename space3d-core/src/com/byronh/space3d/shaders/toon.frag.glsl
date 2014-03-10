@@ -2,14 +2,15 @@
 precision mediump float;
 #endif
 
+uniform vec3 u_lightDir;
+
 varying vec3 v_normal;
-varying vec3 v_lightDir;
  
 void main() {
 
     vec4 color;
     
-    float intensity = dot(v_lightDir, normalize(v_normal));
+    float intensity = dot(u_lightDir, normalize(v_normal));
     
 	if (intensity > 0.95)
 		color = vec4(1.0,0.5,0.5,1.0);

@@ -20,7 +20,7 @@ import com.byronh.space3d.entities.Entity;
 import com.byronh.space3d.entities.SimulationListener;
 
 
-public class DebugRenderer implements SimulationListener {
+public class DebugRenderer implements Renderer, SimulationListener {
 
 	final float GRID_MIN = -10f;
 	final float GRID_MAX = 10f;
@@ -93,6 +93,11 @@ public class DebugRenderer implements SimulationListener {
 			stage.act();
 			stage.draw();
 		}
+	}
+
+	@Override
+	public void dispose() {
+
 	}
 
 	@Override

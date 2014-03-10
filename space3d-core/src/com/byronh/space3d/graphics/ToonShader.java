@@ -22,21 +22,19 @@ public class ToonShader implements Shader {
 	
 	Matrix3 temp = new Matrix3();
 	
-	int u_cameraDirection;
-	
 	int u_projTrans;
 	int u_viewTrans;
 	int u_worldTrans;
 	int u_normalMatrix;
-	
-	int u_lightPos;
+	int u_cameraPos;
+	int u_lightDir;
 
 	private String data = "com/byronh/space3d/shaders";
 
 	@Override
 	public void init() {
-		String vert = Gdx.files.classpath(data + "/toon.vert.glsl").readString();
-		String frag = Gdx.files.classpath(data + "/toon.frag.glsl").readString();
+		String vert = Gdx.files.classpath(data + "/test.vert.glsl").readString();
+		String frag = Gdx.files.classpath(data + "/test.frag.glsl").readString();
 		program = new ShaderProgram(vert, frag);
 		if (!program.isCompiled())
 			throw new GdxRuntimeException(program.getLog());
@@ -45,8 +43,8 @@ public class ToonShader implements Shader {
 		u_viewTrans = program.getUniformLocation("u_viewTrans");
 		u_worldTrans = program.getUniformLocation("u_worldTrans");
 		u_normalMatrix = program.getUniformLocation("u_normalMatrix");
-		
-		u_lightPos = program.getUniformLocation("u_lightPos");
+		u_cameraPos = program.getUniformLocation("u_cameraPos");
+		u_lightDir = program.getUniformLocation("u_lightDir");
 	}
 
 	@Override
@@ -61,17 +59,18 @@ public class ToonShader implements Shader {
 		program.begin();
 		program.setUniformMatrix(u_projTrans, camera.combined);
 		program.setUniformMatrix(u_viewTrans, camera.view);
-		context.setDepthTest(GL20.GL_LEQUAL);
-		context.setCullFace(GL20.GL_BACK);
+		program.setUniformf(u_cameraPos, camera.position);
+//		context.setDepthTest(GL20.GL_LEQUAL);
+//		context.setCullFace(GL20.GL_BACK);
 	}
 
 	@Override
 	public void render(Renderable renderable) {
 		program.setUniformMatrix(u_worldTrans, renderable.worldTransform);
 		program.setUniformMatrix(u_normalMatrix, temp.set(renderable.worldTransform).inv().transpose());
-		
-		program.setUniformf(u_lightPos, renderable.environment.pointLights.first().position);
-		
+		program.setUniformf(u_lightDir, renderable.environment.directionalLights.first().direction);
+		context.setBlending(true, GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+		context.setDepthTest(GL20.GL_LEQUAL);
 		renderable.mesh.render(program, renderable.primitiveType, renderable.meshPartOffset, renderable.meshPartSize);
 	}
 
