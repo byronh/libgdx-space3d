@@ -42,7 +42,7 @@ public class GameplayScreen extends AbstractScreen {
 		game.log("Initializing 3D game world");
 
 		cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		cam.position.set(2.5f, 0.5f, 2.5f);
+		cam.position.set(1.5f, 0.5f, 1.5f);
 		cam.lookAt(0, 0, 0);
 		cam.near = 0.1f;
 		cam.far = 1005f;
@@ -63,7 +63,7 @@ public class GameplayScreen extends AbstractScreen {
 
 		KeyboardController keyboardController = new KeyboardController(game);
 		camController = new CameraInputController(cam);
-		camController.scrollFactor = -0.05f;
+		camController.scrollFactor = -0.005f;
 
 		stage = new Stage();
 		skin = game.assets.get("ui/Holo-dark-hdpi.json", Skin.class);
