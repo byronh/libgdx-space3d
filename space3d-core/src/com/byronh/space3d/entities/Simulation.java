@@ -21,7 +21,7 @@ public class Simulation {
 
 	public void init() {
 		DesertPlanet mars = new DesertPlanet();
-		mars.worldTransform.setToTranslation(0, 0.5f, -1f);
+		mars.worldTransform.setToTranslation(0f, 0f, 0f);
 		
 //		for (float z=-50; z<=50; z+=2) {
 //			for (float x=-50; x<=50; x+=2) {
@@ -31,11 +31,11 @@ public class Simulation {
 //			}
 //		}
 		
-		TerranPlanet earth = new TerranPlanet();
-		earth.worldTransform.setToTranslation(-1.75f, 0.5f, -1f);
+		IcePlanet icy = new IcePlanet();
+		icy.worldTransform.setToTranslation(-1.75f, 0.5f, -1f);
 		
 		addEntity(mars);
-		addEntity(earth);
+		addEntity(icy);
 	}
 	
 	public void addListener(SimulationListener listener) {

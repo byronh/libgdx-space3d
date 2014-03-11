@@ -16,6 +16,6 @@ void main() {
 	float intensity = smoothstep(0.0, 1.0, intensity1 * intensity2);
 	
 	gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
-	gl_FragColor.a *= intensity;
+	gl_FragColor.a = (intensity - 0.35) / 1.55;
 	// * texture2D(u_diffuseTexture, v_texCoord0);
 }

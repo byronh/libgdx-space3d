@@ -61,8 +61,8 @@ public class ToonShader implements Shader {
 		program.setUniformMatrix(u_viewTrans, camera.view);
 		program.setUniformf(u_cameraPos, camera.position);
 		
-		context.setDepthTest(GL20.GL_LEQUAL);
-		context.setCullFace(GL20.GL_BACK);
+		context.setDepthTest(GL20.GL_GEQUAL);
+		context.setCullFace(GL20.GL_FRONT);
 		context.setBlending(true, GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 	}
 
