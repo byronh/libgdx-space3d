@@ -1,5 +1,7 @@
 package com.byronh.space3d;
 
+import zjunk.CBATest;
+
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
@@ -15,6 +17,6 @@ public class Main {
 		cfg.resizable = false;
 		cfg.samples = 8;
 		
-		new LwjglApplication(new Space3DGame(), cfg);
+		new LwjglApplication(new CBATest(), cfg);
 	}
 }

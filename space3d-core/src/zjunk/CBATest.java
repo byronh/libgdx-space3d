@@ -18,10 +18,12 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.PointLight;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Vector3;
-import components.MovementComponent;
-import components.RenderComponent;
-import components.WorldComponent;
+import components.Movement;
+import components.Position;
+import components.Render;
 
+import engine.artemis.Entity;
+import engine.artemis.World;
 
 public class CBATest implements ApplicationListener {
 
@@ -30,14 +32,14 @@ public class CBATest implements ApplicationListener {
 	private Model boxModel, sphereModel;
 	private Environment environment;
 
-	private RenderSystem renderSystem;
-	private MovementSystem movementSystem;
+	private World world;
 	private Entity shape1, shape2;
 
 	@Override
 	public void create() {
 
-		camera = new PerspectiveCamera(75, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		camera = new PerspectiveCamera(75, Gdx.graphics.getWidth(),
+				Gdx.graphics.getHeight());
 
 		camera.position.set(2.5f, 2f, 2.5f);
 		camera.lookAt(0f, 0f, 0f);
@@ -49,35 +51,37 @@ public class CBATest implements ApplicationListener {
 
 		ModelBuilder modelBuilder = new ModelBuilder();
 
-		boxModel = modelBuilder.createBox(1f, 1f, 1f, new Material(ColorAttribute.createDiffuse(Color.GRAY)), Usage.Position | Usage.Normal);
-		sphereModel = modelBuilder.createSphere(1f, 1f, 1f, 50, 50, new Material(ColorAttribute.createDiffuse(Color.GRAY)), Usage.Position
+		boxModel = modelBuilder.createBox(1f, 1f, 1f, new Material(
+				ColorAttribute.createDiffuse(Color.GRAY)), Usage.Position
 				| Usage.Normal);
+		sphereModel = modelBuilder.createSphere(1f, 1f, 1f, 50, 50,
+				new Material(ColorAttribute.createDiffuse(Color.GRAY)),
+				Usage.Position | Usage.Normal);
 
 		environment = new Environment();
-		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.8f, 0.8f, 0.8f, 1.0f));
+		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.8f,
+				0.8f, 0.8f, 1.0f));
 		environment.add(new PointLight().set(1f, 1f, 1f, 10f, 5.5f, 15f, 300f));
 
-		EntityManager manager = new EntityManager();
-		renderSystem = new RenderSystem(manager, camera);
-		movementSystem = new MovementSystem(manager);
+		world = new World();
+		world.setSystem(new MovementSystem());
+		world.setSystem(new RenderSystem(camera));
+		world.initialize();
 
-		shape1 = manager.create();
-		shape2 = manager.create();
-
-		WorldComponent world1 = new WorldComponent();
-		RenderComponent render1 = new RenderComponent();
+		shape1 = world.createEntity();
+		Position world1 = world.createComponent(Position.class);
+		world1.world.setToTranslation(1f,1f,1f);
+		shape1.addComponent(world1);
+		Movement movement1 = world.createComponent(Movement.class);
+		movement1.velocity = new Vector3(-2f,0f,0f);
+		shape1.addComponent(movement1);
+		Render render1 = world.createComponent(Render.class);
 		render1.environment = environment;
 		render1.instance = new ModelInstance(boxModel);
-		shape1.add(world1);
-		shape1.add(render1);
+		shape1.addComponent(render1);
+		shape1.addToWorld();
 
-		WorldComponent world2 = new WorldComponent();
-		RenderComponent render2 = new RenderComponent();
-		world2.setToTranslation(-2f, 0f, 0f);
-		render2.environment = environment;
-		render2.instance = new ModelInstance(sphereModel);
-		shape2.add(world2);
-		shape2.add(render2);
+		// shape2 = world.createEntity();
 	}
 
 	@Override
@@ -96,22 +100,25 @@ public class CBATest implements ApplicationListener {
 		float delta = Gdx.graphics.getDeltaTime();
 		time += delta;
 
-		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(),
+				Gdx.graphics.getHeight());
 		Gdx.gl.glClearColor(0, 0, 0, 1);
-		Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT
-				| (Gdx.graphics.getBufferFormat().coverageSampling ? GL20.GL_COVERAGE_BUFFER_BIT_NV : 0));
+		Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT
+				| GL20.GL_DEPTH_BUFFER_BIT
+				| (Gdx.graphics.getBufferFormat().coverageSampling ? GL20.GL_COVERAGE_BUFFER_BIT_NV
+						: 0));
 
 		camera.update();
 
-		renderSystem.update(delta);
-		movementSystem.update(delta);
+		world.setDelta(delta);
+		world.process();
 
-		if (time > 1 && !done) {
-			MovementComponent movement = new MovementComponent();
-			movement.velocity = new Vector3(0f, 0f, -9f);
-			shape2.add(movement);
-			done = true;
-		}
+		// if (time > 1 && !done) {
+		// Movement movement = new Movement();
+		// movement.velocity = new Vector3(0f, 0f, -9f);
+		// shape2.add(movement);
+		// done = true;
+		// }
 
 		// Gdx.app.log("FPS", Gdx.graphics.getFramesPerSecond() + "");
 	}

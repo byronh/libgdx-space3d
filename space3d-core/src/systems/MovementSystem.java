@@ -1,32 +1,40 @@
 package systems;
 
-import zjunk.Component;
-import zjunk.Entity;
-import zjunk.EntityManager;
-import zjunk.System;
-
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.IntMap;
+import com.badlogic.gdx.utils.Array;
 
-import components.MovementComponent;
-import components.WorldComponent;
+import components.Movement;
+import components.Position;
+import engine.artemis.ComponentMapper;
+import engine.artemis.Entity;
+import engine.artemis.Filter;
+import engine.artemis.systems.EntitySystem;
 
 
-public class MovementSystem extends System {
+public class MovementSystem extends EntitySystem {
+	
+	ComponentMapper<Position> pm;
+	ComponentMapper<Movement> mm;
 
-	public MovementSystem(EntityManager manager) {
-		super(manager);
+	@SuppressWarnings("unchecked")
+	public MovementSystem() {
+		super(Filter.allComponents(Position.class, Movement.class));
+	}
+	
+	@Override
+	public void initialize() {
+		pm = world.getMapper(Position.class);
+		mm = world.getMapper(Movement.class);
 	}
 
 	@Override
-	public void update(float delta) {
-		IntMap<Entity> entities = manager.entitiesWithComponent(Component.Movement);
-		for (Entity entity : entities.values()) {
-			WorldComponent world = entity.getComponent(Component.World);
-			MovementComponent movement = entity.getComponent(Component.Movement);
-			movement.acceleration = world.cpy().inv().getTranslation(Vector3.Zero);
+	protected void processEntities(Array<Entity> entities) {
+		for (Entity e : entities) {
+			Position position = pm.get(e);
+			Movement movement = mm.get(e);
+			movement.acceleration = position.world.cpy().inv().getTranslation(Vector3.Zero);
 			movement.velocity.add(movement.acceleration);
-			world.translate(movement.velocity.cpy().scl(delta));
+			position.world.translate(movement.velocity.cpy().scl(world.getDelta()));
 		}
 	}
 

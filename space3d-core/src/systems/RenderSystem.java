@@ -1,43 +1,47 @@
 package systems;
 
-import zjunk.Component;
-import zjunk.Entity;
-import zjunk.EntityManager;
-import zjunk.System;
-
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
-import com.badlogic.gdx.utils.IntMap;
+import com.badlogic.gdx.utils.Array;
+import components.Position;
+import components.Render;
 
-import components.RenderComponent;
-import components.WorldComponent;
+import engine.artemis.ComponentMapper;
+import engine.artemis.Entity;
+import engine.artemis.Filter;
+import engine.artemis.systems.EntitySystem;
 
+public class RenderSystem extends EntitySystem {
 
-public class RenderSystem extends System {
-	
+	ComponentMapper<Position> pm;
+	ComponentMapper<Render> rm;
+
 	private PerspectiveCamera cam;
 	private ModelBatch batch;
 
-	public RenderSystem(EntityManager entityManager, PerspectiveCamera camera) {
-		super(entityManager);
+	@SuppressWarnings("unchecked")
+	public RenderSystem(PerspectiveCamera camera) {
+		super(Filter.allComponents(Position.class, Render.class));
 		cam = camera;
+	}
+
+	@Override
+	public void initialize() {
+		pm = world.getMapper(Position.class);
+		rm = world.getMapper(Render.class);
 		batch = new ModelBatch();
 	}
 
 	@Override
-	public void update(float delta) {
-		// TODO Replace with bit mask system, this is really ugly and doesn't even work
-		IntMap<Entity> entities = manager.entitiesWithComponent(Component.Render);
-		for (Entity entity : entities.values()) {
-			WorldComponent world = entity.getComponent(Component.World);
-			RenderComponent render = entity.getComponent(Component.Render);
-			
-			render.instance.transform = world;
-			
-			batch.begin(cam);
+	protected void processEntities(Array<Entity> entities) {
+		batch.begin(cam);
+		for (Entity e : entities) {
+			Position position = pm.get(e);
+			Render render = rm.get(e);
+			render.instance.transform = position.world;
 			batch.render(render.instance, render.environment, render.shader);
-			batch.end();
 		}
+		batch.end();
 	}
-
+	
 }
