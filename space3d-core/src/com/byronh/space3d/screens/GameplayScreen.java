@@ -17,6 +17,8 @@ import com.byronh.space3d.entities.Simulation;
 import com.byronh.space3d.graphics.DebugRenderer;
 import com.byronh.space3d.graphics.Renderer3D;
 
+import engine.AbstractScreen;
+
 
 public class GameplayScreen extends AbstractScreen implements InputProcessor {
 

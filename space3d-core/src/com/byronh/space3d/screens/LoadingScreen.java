@@ -8,6 +8,8 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.byronh.space3d.Space3DGame;
 
+import engine.AbstractScreen;
+
 
 public class LoadingScreen extends AbstractScreen {
 

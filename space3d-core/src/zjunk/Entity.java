@@ -1,4 +1,4 @@
-package comparchitecture;
+package zjunk;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.ObjectMap;

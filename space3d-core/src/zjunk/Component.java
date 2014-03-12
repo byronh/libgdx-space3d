@@ -1,4 +1,4 @@
-package comparchitecture;
+package zjunk;
 
 import components.MovementComponent;
 import components.RenderComponent;

@@ -1,4 +1,4 @@
-package com.byronh.space3d.screens;
+package engine;
 
 import com.badlogic.gdx.Screen;
 import com.byronh.space3d.Space3DGame;

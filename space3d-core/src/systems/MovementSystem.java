@@ -1,12 +1,13 @@
 package systems;
 
+import zjunk.Component;
+import zjunk.Entity;
+import zjunk.EntityManager;
+import zjunk.System;
+
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.IntMap;
 
-import comparchitecture.Component;
-import comparchitecture.Entity;
-import comparchitecture.EntityManager;
-import comparchitecture.System;
 import components.MovementComponent;
 import components.WorldComponent;
 

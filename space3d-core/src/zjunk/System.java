@@ -1,4 +1,4 @@
-package comparchitecture;
+package zjunk;
 
 
 public abstract class System {

@@ -1,7 +1,8 @@
 package components;
 
+import zjunk.Component;
+
 import com.badlogic.gdx.math.Matrix4;
-import comparchitecture.Component;
 
 
 public class WorldComponent extends Matrix4 implements Component {

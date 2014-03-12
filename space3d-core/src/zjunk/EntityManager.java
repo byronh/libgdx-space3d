@@ -1,4 +1,4 @@
-package comparchitecture;
+package zjunk;
 
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.IntMap;

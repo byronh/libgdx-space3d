@@ -1,8 +1,8 @@
 package components;
 
-import com.badlogic.gdx.math.Vector3;
+import zjunk.Component;
 
-import comparchitecture.Component;
+import com.badlogic.gdx.math.Vector3;
 
 
 public class MovementComponent implements Component {

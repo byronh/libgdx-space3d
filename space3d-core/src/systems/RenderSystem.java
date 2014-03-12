@@ -1,12 +1,14 @@
 package systems;
 
+import zjunk.Component;
+import zjunk.Entity;
+import zjunk.EntityManager;
+import zjunk.System;
+
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.utils.IntMap;
-import comparchitecture.Component;
-import comparchitecture.Entity;
-import comparchitecture.EntityManager;
-import comparchitecture.System;
+
 import components.RenderComponent;
 import components.WorldComponent;
 

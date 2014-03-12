@@ -1,4 +1,4 @@
-package comparchitecture;
+package zjunk;
 
 import systems.MovementSystem;
 import systems.RenderSystem;
