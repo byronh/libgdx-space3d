@@ -10,23 +10,22 @@ public class EntityManager {
 	private IntMap<Entity> entities = new IntMap<Entity>();
 	
 	private int id = 0;
-	private Entity current;
 	
-	public EntityManager() {
-		begin();
+	public Entity create() {
+		Entity entity = new Entity(this, nextId());
+		entities.put(entity.id, entity);
+		return entity;
 	}
 	
-	public EntityManager begin() {
-		return this;
-	}
-	
-	public Entity build() {
-		return current;
-	}
-	
-	public EntityManager world(float x, float y, float z) {
-		
-		return this;
+	public <T extends Component> IntMap<Entity> entitiesWithComponent(Class<T> type) {
+		// TODO Pool the data structure
+		IntMap<Entity> result = new IntMap<Entity>();
+		for (Entity entity : entities.values()) {
+			if (entity.hasComponent(type)) {
+				result.put(entity.id, entity);
+			}
+		}
+		return result;
 	}
 	
 	private int nextId() {

@@ -4,13 +4,13 @@ import com.badlogic.gdx.math.Matrix4;
 import comparchitecture.Component;
 
 
-public class WorldComponent extends Component {
+public class WorldComponent extends Matrix4 implements Component {
 
-	public Matrix4 worldTransform = new Matrix4();
+	private static final long serialVersionUID = 1L;
 
 	@Override
 	public String debug() {
-		return worldTransform.toString();
+		return this.toString();
 	}
 
 }

@@ -6,15 +6,15 @@ import com.badlogic.gdx.graphics.g3d.Shader;
 import comparchitecture.Component;
 
 
-public class RenderComponent extends Component {
+public class RenderComponent implements Component {
 	
 	public ModelInstance instance;
-	public Environment lights;
+	public Environment environment;
 	public Shader shader;
 
 	@Override
 	public String debug() {
-		return instance.toString() + "," + lights.toString() + "," + shader.toString();
+		return instance.toString() + "," + environment.toString() + "," + shader.toString();
 	}
 
 }

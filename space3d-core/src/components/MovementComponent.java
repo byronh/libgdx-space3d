@@ -5,7 +5,7 @@ import com.badlogic.gdx.math.Vector3;
 import comparchitecture.Component;
 
 
-public class MovementComponent extends Component {
+public class MovementComponent implements Component {
 	
 	public Vector3 velocity = new Vector3();
 	public Vector3 acceleration = new Vector3();
