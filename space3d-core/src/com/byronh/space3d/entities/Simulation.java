@@ -1,6 +1,7 @@
 package com.byronh.space3d.entities;
 
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.utils.Array;
 
 

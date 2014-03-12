@@ -7,6 +7,8 @@ public abstract class Entity {
 
 	public Matrix4 worldTransform;
 	
+	public boolean selected = false;
+	
 	public Entity() {
 		worldTransform = new Matrix4();
 	}
