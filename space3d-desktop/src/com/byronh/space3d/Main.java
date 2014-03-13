@@ -1,6 +1,6 @@
 package com.byronh.space3d;
 
-import zjunk.CBATest;
+import test.ArtemisTest;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
@@ -17,6 +17,6 @@ public class Main {
 		cfg.resizable = false;
 		cfg.samples = 8;
 		
-		new LwjglApplication(new CBATest(), cfg);
+		new LwjglApplication(new ArtemisTest(), cfg);
 	}
 }
