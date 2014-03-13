@@ -7,13 +7,18 @@ import engine.artemis.Component;
 
 public class Movement implements Component {
 	
-	public Vector3 velocity = new Vector3();
-	public Vector3 acceleration = new Vector3();
+	public Vector3 velocity;
+	public Vector3 acceleration;
+	
+	public Movement() {
+		velocity = new Vector3();
+		acceleration = new Vector3();
+	}
 
 	@Override
 	public void reset() {
-		velocity.set(0, 0, 0);
-		acceleration.set(0, 0, 0);
+		velocity = null;
+		acceleration = null;
 	}
 
 }

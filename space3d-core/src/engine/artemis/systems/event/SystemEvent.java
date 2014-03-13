@@ -38,7 +38,7 @@ public abstract class SystemEvent implements Poolable {
     protected abstract void resetForPooling();
 
     /**
-     * Factory method to create an event of a specified type. Uses pooling.
+     * ShipFactory method to create an event of a specified type. Uses pooling.
      * 
      * @param type Type of event to create.
      * @return Pooled event.

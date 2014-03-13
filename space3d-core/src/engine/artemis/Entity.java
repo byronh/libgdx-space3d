@@ -93,6 +93,20 @@ public final class Entity implements Poolable {
         }
         return this;
     }
+    
+    /**
+     * Adds multiple components to this entity.
+     * 
+     * @param components to add to this entity
+     * 
+     * @return this entity for chaining.
+     */
+    public Entity addComponents(Component... components) {
+    	for (Component component : components) {
+    		this.addComponent(component);
+    	}
+    	return this;
+    }
 
     /**
      * Removes the component from this entity.

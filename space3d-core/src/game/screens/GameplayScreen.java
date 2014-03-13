@@ -1,14 +1,19 @@
 package game.screens;
 
-import junk.AbstractScreen;
-import junk.entities.Simulation;
-import junk.graphics.DebugRenderer;
-import junk.graphics.Renderer3D;
+import engine.ComponentWorld;
+import engine.artemis.managers.GroupManager;
+import engine.artemis.managers.PlayerManager;
+import game.Space3DGame;
+import game.factories.PlanetFactory;
+import game.factories.ShipFactory;
+import game.systems.MovementSystem;
+import game.systems.RenderSystem;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
@@ -18,14 +23,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
-import game.Space3DGame;
 
+public class GameplayScreen implements Screen, InputProcessor {
 
-public class GameplayScreen extends AbstractScreen implements InputProcessor {
-
-	Simulation sim;
-	Renderer3D renderer;
-	DebugRenderer debugRenderer;
+	private Space3DGame game;
+	private ComponentWorld world;
+	private ShipFactory shipFactory;
 
 	private InputMultiplexer inputMultiplexer;
 	private PerspectiveCamera cam;
@@ -36,37 +39,20 @@ public class GameplayScreen extends AbstractScreen implements InputProcessor {
 	private TextButton button;
 
 	public GameplayScreen(Space3DGame game) {
-		super(game);
+		this.game = game;
 	}
 
 	@Override
 	public void show() {
-		super.show();
-
-		game.log("Initializing 3D game world");
 
 		cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		cam.position.set(1.5f, 0.5f, 1.5f);
+		cam.position.set(5.5f, 8.5f, 5.5f);
 		cam.lookAt(0, 0, 0);
 		cam.near = 0.1f;
-		cam.far = 1005f;
+		cam.far = 2005f;
 		cam.update();
 
-		renderer = new Renderer3D(game);
-		debugRenderer = new DebugRenderer(game);
-		
-		sim = new Simulation();
-		sim.addListener(renderer);
-		sim.addListener(debugRenderer);
-
-		renderer.init();
-		debugRenderer.init();
-		sim.init();
-
-		game.log("Initializing game controller");
-
 		camController = new CameraInputController(cam);
-		camController.scrollFactor = -0.005f;
 		camController.translateTarget = false;
 
 		stage = new Stage();
@@ -87,36 +73,50 @@ public class GameplayScreen extends AbstractScreen implements InputProcessor {
 		inputMultiplexer.addProcessor(stage);
 		inputMultiplexer.addProcessor(camController);
 		Gdx.input.setInputProcessor(inputMultiplexer);
+
+		world = new ComponentWorld();
+
+		world.setSystem(new MovementSystem());
+		world.setSystem(new RenderSystem(cam));
+		
+		world.setManager(new PlayerManager());
+		world.setManager(new GroupManager());
+
+		world.initialize();
+
+		shipFactory = new ShipFactory(world, game.assets);
+		shipFactory.createShip(-2, 0, -2);
+		shipFactory.createShip(0, 0, 0);
+		shipFactory.createShip(2, 0, -2);
+
+		PlanetFactory planetFactory = new PlanetFactory(world, game.assets);
+		planetFactory.createPlanet(2, 0, -502);
+		planetFactory.createSkybox();
+
 	}
 
 	@Override
 	public void render(float delta) {
-		super.render(delta);
-		
-		sim.mainLoop(delta);
-
 		Gdx.gl20.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		Gdx.gl20.glClearColor(0, 0, 0, 1);
 		Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT
 				| (Gdx.graphics.getBufferFormat().coverageSampling ? GL20.GL_COVERAGE_BUFFER_BIT_NV : 0));
 
 		camController.update();
-		renderer.render(cam);
+
+		world.setDelta(delta);
+		world.process();
 
 		stage.act(delta);
 		stage.draw();
-		
-		debugRenderer.render(cam);
 	}
 
 	@Override
 	public void dispose() {
-		super.dispose();
+		world.dispose();
 		skin.dispose();
 		stage.dispose();
 	}
-	
-	
 
 	@Override
 	public boolean keyDown(int keycode) {
@@ -143,7 +143,7 @@ public class GameplayScreen extends AbstractScreen implements InputProcessor {
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
 		if (button == Input.Buttons.LEFT) {
 			Gdx.app.log("Input", "Mouse left-clicked at (" + screenX + "," + screenY + ")");
-//			Ray ray = cam.getPickRay(screenX, screenY);
+			// Ray ray = cam.getPickRay(screenX, screenY);
 		}
 		return false;
 	}
@@ -166,5 +166,29 @@ public class GameplayScreen extends AbstractScreen implements InputProcessor {
 	@Override
 	public boolean scrolled(int amount) {
 		return false;
+	}
+
+	@Override
+	public void resize(int width, int height) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void hide() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void pause() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void resume() {
+		// TODO Auto-generated method stub
+
 	}
 }

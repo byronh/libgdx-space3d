@@ -1,6 +1,5 @@
 package game.systems;
 
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
 import engine.artemis.ComponentMapper;
@@ -32,7 +31,6 @@ public class MovementSystem extends EntitySystem {
 		for (Entity e : entities) {
 			Position position = pm.get(e);
 			Movement movement = mm.get(e);
-			movement.acceleration = position.world.cpy().inv().getTranslation(Vector3.Zero);
 			movement.velocity.add(movement.acceleration);
 			position.world.translate(movement.velocity.cpy().scl(world.getDelta()));
 		}

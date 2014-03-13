@@ -30,7 +30,7 @@ public class Position implements Component {
 
 	@Override
 	public void reset() {
-		world = new Matrix4();
+		world = null;
 	}
 
 }

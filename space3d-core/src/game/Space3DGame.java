@@ -11,6 +11,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.Json;
 
 
@@ -41,6 +42,16 @@ public class Space3DGame extends Game {
 		gameplayScreen = new GameplayScreen(this);
 		
 		setScreen(loadingScreen);
+	}
+	
+	@Override
+	public void render() {
+		try {
+			super.render();
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new GdxRuntimeException(e);
+		}
 	}
 	
 	@Override

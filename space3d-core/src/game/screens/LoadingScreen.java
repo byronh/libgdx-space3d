@@ -1,9 +1,9 @@
 package game.screens;
 
 import game.Space3DGame;
-import junk.AbstractScreen;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g3d.Model;
@@ -12,13 +12,14 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 
-public class LoadingScreen extends AbstractScreen {
-
+public class LoadingScreen implements Screen {
+	
+	private Space3DGame game;
     private Stage stage;
     private float percent = 0f;
 
     public LoadingScreen(Space3DGame game) {
-        super(game);
+        this.game = game;
     }
 
     @Override
@@ -69,6 +70,18 @@ public class LoadingScreen extends AbstractScreen {
 
 	@Override
 	public void hide() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void pause() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void resume() {
 		// TODO Auto-generated method stub
 		
 	}

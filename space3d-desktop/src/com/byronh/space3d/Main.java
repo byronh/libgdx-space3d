@@ -1,6 +1,6 @@
 package com.byronh.space3d;
 
-import test.ArtemisTest;
+import game.Space3DGame;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
@@ -17,6 +17,6 @@ public class Main {
 		cfg.resizable = false;
 		cfg.samples = 8;
 		
-		new LwjglApplication(new ArtemisTest(), cfg);
+		new LwjglApplication(new Space3DGame(), cfg);
 	}
 }
