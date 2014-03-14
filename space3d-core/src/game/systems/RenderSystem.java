@@ -5,13 +5,11 @@ import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
-import com.badlogic.gdx.graphics.g3d.environment.PointLight;
 import com.badlogic.gdx.utils.Array;
 
 import engine.artemis.ComponentMapper;
 import engine.artemis.Entity;
 import engine.artemis.Filter;
-import engine.artemis.managers.GroupManager;
 import engine.artemis.systems.EntitySystem;
 import game.components.Position;
 import game.components.Render;

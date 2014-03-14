@@ -12,7 +12,7 @@ import engine.artemis.World;
 import game.components.Movement;
 import game.components.Position;
 import game.components.Render;
-import game.components.State;
+import game.components.Select;
 
 
 /**
@@ -36,7 +36,8 @@ public class ShipFactory extends EntityFactory {
 		shipModel = assets.get("models/ship.g3db", Model.class);
 		shipModel.materials.first().set(spec, shine);
 	}
-
+	
+	// TODO Warn the designer if an entity is missing something e.g. a 3D model
 	// TODO Remove the need for boilerplate code
 	public Entity createShip(float x, float y, float z) {
 		
@@ -45,14 +46,13 @@ public class ShipFactory extends EntityFactory {
 		Position position = world.createComponent(Position.class);
 		Movement movement = world.createComponent(Movement.class);
 		Render render = world.createComponent(Render.class);
-		State state = world.createComponent(State.class);
+		Select select = world.createComponent(Select.class);
 		
 		position.world.setToTranslation(x, y, z);
 		movement.velocity.set(0, 0, 0.5f);
 		render.instance = new ModelInstance(shipModel);
-		if (x == 0 && y == 0 && z == 0) state.selected = true;
 		
-		ship.addComponents(position, movement, render, state);
+		ship.addComponents(position, movement, render, select);
 		ship.addToWorld();
 		
 		return ship;

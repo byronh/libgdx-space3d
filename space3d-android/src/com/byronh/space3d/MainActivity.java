@@ -1,5 +1,6 @@
 package com.byronh.space3d;
 
+import game.Space3DGame;
 import android.os.Bundle;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;

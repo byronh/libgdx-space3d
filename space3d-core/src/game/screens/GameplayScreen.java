@@ -8,11 +8,11 @@ import game.factories.PlanetFactory;
 import game.factories.ShipFactory;
 import game.systems.MovementSystem;
 import game.systems.RenderSystem;
+import game.systems.SelectionSystem;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
@@ -24,7 +24,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 
-public class GameplayScreen implements Screen, InputProcessor {
+public class GameplayScreen implements Screen {
 
 	private Space3DGame game;
 	private ComponentWorld world;
@@ -53,6 +53,7 @@ public class GameplayScreen implements Screen, InputProcessor {
 		cam.update();
 
 		camController = new CameraInputController(cam);
+		camController.rotateButton = Input.Buttons.RIGHT;
 		camController.translateTarget = false;
 
 		stage = new Stage();
@@ -68,17 +69,12 @@ public class GameplayScreen implements Screen, InputProcessor {
 		});
 		stage.addActor(button);
 
-		inputMultiplexer = new InputMultiplexer();
-		inputMultiplexer.addProcessor(this);
-		inputMultiplexer.addProcessor(stage);
-		inputMultiplexer.addProcessor(camController);
-		Gdx.input.setInputProcessor(inputMultiplexer);
-
 		world = new ComponentWorld();
 
 		world.setSystem(new MovementSystem());
 		world.setSystem(new RenderSystem(cam));
-		
+		world.setSystem(new SelectionSystem(cam));
+
 		world.setManager(new PlayerManager());
 		world.setManager(new GroupManager());
 
@@ -92,6 +88,12 @@ public class GameplayScreen implements Screen, InputProcessor {
 		PlanetFactory planetFactory = new PlanetFactory(world, game.assets);
 		planetFactory.createPlanet(2, 0, -502);
 		planetFactory.createSkybox();
+
+		inputMultiplexer = new InputMultiplexer();
+		inputMultiplexer.addProcessor(world.getSystem(SelectionSystem.class));
+		inputMultiplexer.addProcessor(stage);
+		inputMultiplexer.addProcessor(camController);
+		Gdx.input.setInputProcessor(inputMultiplexer);
 
 	}
 
@@ -119,76 +121,37 @@ public class GameplayScreen implements Screen, InputProcessor {
 	}
 
 	@Override
-	public boolean keyDown(int keycode) {
-		if (keycode == Input.Keys.ESCAPE) {
-			game.exit();
-			return true;
-		} else if (keycode == Input.Keys.SPACE) {
-			game.config.devMode = !game.config.devMode;
-		}
-		return false;
-	}
-
-	@Override
-	public boolean keyUp(int keycode) {
-		return false;
-	}
-
-	@Override
-	public boolean keyTyped(char character) {
-		return false;
-	}
-
-	@Override
-	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		if (button == Input.Buttons.LEFT) {
-			Gdx.app.log("Input", "Mouse left-clicked at (" + screenX + "," + screenY + ")");
-			// Ray ray = cam.getPickRay(screenX, screenY);
-		}
-		return false;
-	}
-
-	@Override
-	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		return false;
-	}
-
-	@Override
-	public boolean touchDragged(int screenX, int screenY, int pointer) {
-		return false;
-	}
-
-	@Override
-	public boolean mouseMoved(int screenX, int screenY) {
-		return false;
-	}
-
-	@Override
-	public boolean scrolled(int amount) {
-		return false;
-	}
-
-	@Override
 	public void resize(int width, int height) {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
 	public void hide() {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
 	public void pause() {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
 	public void resume() {
 		// TODO Auto-generated method stub
-
+		
 	}
+
+//	@Override
+//	public boolean keyDown(int keycode) {
+//		if (keycode == Input.Keys.ESCAPE) {
+//			game.exit();
+//			return true;
+//		} else if (keycode == Input.Keys.SPACE) {
+//			game.config.devMode = !game.config.devMode;
+//		}
+//		return false;
+//	}
 }
