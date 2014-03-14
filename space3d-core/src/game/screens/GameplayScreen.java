@@ -3,10 +3,12 @@ package game.screens;
 import engine.ComponentWorld;
 import engine.artemis.managers.GroupManager;
 import engine.artemis.managers.PlayerManager;
+import engine.artemis.systems.EntitySystem;
 import game.Space3DGame;
 import game.factories.PlanetFactory;
 import game.factories.ShipFactory;
 import game.systems.MovementSystem;
+import game.systems.PhysicsDebugSystem;
 import game.systems.PhysicsSystem;
 import game.systems.RenderSystem;
 import game.systems.SelectionSystem;
@@ -14,6 +16,7 @@ import game.systems.SelectionSystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
@@ -75,7 +78,8 @@ public class GameplayScreen implements Screen {
 		world.setSystem(new MovementSystem());
 		world.setSystem(new RenderSystem(cam));
 		world.setSystem(new SelectionSystem(cam));
-		world.setSystem(new PhysicsSystem(cam));
+		world.setSystem(new PhysicsSystem());
+		world.setSystem(new PhysicsDebugSystem(cam, game.assets));
 
 		world.setManager(new PlayerManager());
 		world.setManager(new GroupManager());
@@ -83,16 +87,26 @@ public class GameplayScreen implements Screen {
 		world.initialize();
 
 		shipFactory = new ShipFactory(world, game.assets);
-		shipFactory.createShip(-3, 0, -3);
-		shipFactory.createShip(0, 0, 0);
-		shipFactory.createShip(3, 0, -3);
+		for (float x = -4; x <= 4 ; x += 2) {
+			for (float z = -4; z <= 4; z += 2) {
+				for (float y = 4; y >= -4; y -= 2) {
+					shipFactory.createShip(x, y, z);
+				}
+			}
+		}
+//		shipFactory.createShip(-3, 0, -3);
+//		shipFactory.createShip(0, 0, 0);
+//		shipFactory.createShip(3, 0, -3);
 
 		PlanetFactory planetFactory = new PlanetFactory(world, game.assets);
 		planetFactory.createPlanet(2, 0, -502);
 		planetFactory.createSkybox();
 
 		inputMultiplexer = new InputMultiplexer();
-		inputMultiplexer.addProcessor(world.getSystem(SelectionSystem.class));
+		for (EntitySystem s : world.getSystems()) {
+			if (s instanceof InputProcessor)
+				inputMultiplexer.addProcessor((InputProcessor)s);
+		}
 		inputMultiplexer.addProcessor(stage);
 		inputMultiplexer.addProcessor(camController);
 		Gdx.input.setInputProcessor(inputMultiplexer);

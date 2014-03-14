@@ -1,7 +1,7 @@
 package game.systems;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.Bullet;
 import com.badlogic.gdx.physics.bullet.collision.btBoxShape;
@@ -9,8 +9,10 @@ import com.badlogic.gdx.physics.bullet.collision.btBroadphaseInterface;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionConfiguration;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionDispatcher;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
+import com.badlogic.gdx.physics.bullet.collision.btConvexHullShape;
 import com.badlogic.gdx.physics.bullet.collision.btDbvtBroadphase;
 import com.badlogic.gdx.physics.bullet.collision.btDefaultCollisionConfiguration;
+import com.badlogic.gdx.physics.bullet.collision.btShapeHull;
 import com.badlogic.gdx.physics.bullet.dynamics.btConstraintSolver;
 import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld;
 import com.badlogic.gdx.physics.bullet.dynamics.btDynamicsWorld;
@@ -18,14 +20,12 @@ import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBodyConstructionInfo;
 import com.badlogic.gdx.physics.bullet.dynamics.btSequentialImpulseConstraintSolver;
 import com.badlogic.gdx.physics.bullet.linearmath.btDefaultMotionState;
-import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw;
 import com.badlogic.gdx.utils.Array;
 
 import engine.artemis.ComponentMapper;
 import engine.artemis.Entity;
 import engine.artemis.Filter;
 import engine.artemis.systems.EntitySystem;
-import engine.physics.DebugDrawer;
 import game.components.Physics;
 import game.components.Position;
 
@@ -35,22 +35,17 @@ public class PhysicsSystem extends EntitySystem {
 	ComponentMapper<Position> positionMapper;
 	ComponentMapper<Physics> physicsMapper;
 
-	private Camera cam;
-
 	private btCollisionConfiguration collisionConfiguration;
 	private btCollisionDispatcher dispatcher;
 	private btBroadphaseInterface broadphase;
 	private btConstraintSolver solver;
 	private btDynamicsWorld collisionWorld;
 
-	private DebugDrawer debugDrawer = null;
-
 	private Vector3 tempVector = new Vector3();
 
 	@SuppressWarnings("unchecked")
-	public PhysicsSystem(Camera camera) {
+	public PhysicsSystem() {
 		super(Filter.allComponents(Position.class, Physics.class));
-		cam = camera;
 	}
 
 	@Override
@@ -67,21 +62,16 @@ public class PhysicsSystem extends EntitySystem {
 		solver = new btSequentialImpulseConstraintSolver();
 		collisionWorld = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
 		collisionWorld.setGravity(new Vector3());
-
-		// TODO refactor debug into its own system
-		collisionWorld.setDebugDrawer(debugDrawer = new DebugDrawer());
-
-		debugDrawer.setDebugMode(btIDebugDraw.DebugDrawModes.DBG_DrawWireframe);
-
 	}
 
 	@Override
 	protected void inserted(Entity e) {
 		Position position = positionMapper.get(e);
-		Physics physics = physicsMapper.get(e);
+		Physics physics = physicsMapper.get(e);		
 		
-		btCollisionShape shape = new btBoxShape(physics.getExtents());
-		btRigidBodyConstructionInfo info = new btRigidBodyConstructionInfo(physics.getMass(), null, shape, Vector3.Zero);
+		tempVector.set(physics.getExtents());
+		btCollisionShape shape = new btBoxShape(tempVector);
+		btRigidBodyConstructionInfo info = new btRigidBodyConstructionInfo(physics.getMass(), null, shape, tempVector);
 		btDefaultMotionState motionState = new btDefaultMotionState();
 		
 		info.setLinearSleepingThreshold(0.1f);
@@ -93,6 +83,8 @@ public class PhysicsSystem extends EntitySystem {
 		
 		physics.setBody(body);
 		physics.setMotionState(motionState);
+		
+		info.dispose();
 	}
 
 	@Override
@@ -111,21 +103,41 @@ public class PhysicsSystem extends EntitySystem {
 		elapsed += delta;
 		
 		btRigidBody body = physicsMapper.get(entities.first()).getBody();
+//		btDefaultMotionState motionState = physicsMapper.get(entities.first()).getMotionState();
 		if (elapsed > 1.5f && !done) {
-			body.applyCentralImpulse(tempVector.set(2, 0, 2));
+			body.applyCentralImpulse(tempVector.set(20, -20f, 20));
 			done = true;
 		}
 		
 		((btDynamicsWorld) collisionWorld).stepSimulation(delta, 5);
-
+		
+		// If you attempt to ask a body for its position, it will return the position at the
+		// end of the last physics tick. Bullet interpolates the transform of the body before
+		// passing the value to setWorldTransform.
 		for (Entity e : entities) {
 			physicsMapper.get(e).getMotionState().getWorldTransform(positionMapper.get(e).world);
 		}
-
-		debugDrawer.lineRenderer.setProjectionMatrix(cam.combined);
-		debugDrawer.begin();
-		collisionWorld.debugDrawWorld();
-		debugDrawer.end();
+		
+	}
+	
+	public static btConvexHullShape createConvexHullShape (final Mesh mesh, boolean optimize) {
+		
+		final btConvexHullShape shape = new btConvexHullShape(mesh.getVerticesBuffer(), mesh.getNumVertices(), mesh.getVertexSize());
+		if (!optimize) return shape;
+		
+		// Optimize the shape
+		final btShapeHull hull = new btShapeHull(shape);
+		hull.buildHull(shape.getMargin());
+		final btConvexHullShape result = new btConvexHullShape(hull);
+		
+		// Dispose the temporary shape
+		shape.dispose();
+		hull.dispose();
+		return result;
+	}
+	
+	public btDynamicsWorld getCollisionWorld() {
+		return collisionWorld;
 	}
 
 }

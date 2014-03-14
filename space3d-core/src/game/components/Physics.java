@@ -14,7 +14,6 @@ public class Physics implements Component {
 	private Vector3 hitboxExtents;
 
 	private btRigidBody body;
-
 	private btDefaultMotionState motionState;
 
 	public void init(float mass, Vector3 hitboxExtents) {
