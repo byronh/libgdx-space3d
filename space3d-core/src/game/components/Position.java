@@ -33,4 +33,10 @@ public class Position implements Component {
 		world = null;
 	}
 
+	@Override
+	public void dispose() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

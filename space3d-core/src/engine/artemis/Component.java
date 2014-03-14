@@ -12,5 +12,7 @@ import com.badlogic.gdx.utils.Pool.Poolable;
  * @author Arni Arent
  */
 public interface Component extends Poolable {
+	
+	public abstract void dispose();
 
 }

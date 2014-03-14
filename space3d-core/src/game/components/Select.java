@@ -12,4 +12,10 @@ public class Select implements Component {
 		selected = false;
 	}
 
+	@Override
+	public void dispose() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

@@ -5,11 +5,13 @@ import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.FloatAttribute;
+import com.badlogic.gdx.math.Vector3;
 
 import engine.EntityFactory;
 import engine.artemis.Entity;
 import engine.artemis.World;
 import game.components.Movement;
+import game.components.Physics;
 import game.components.Position;
 import game.components.Render;
 import game.components.Select;
@@ -44,15 +46,17 @@ public class ShipFactory extends EntityFactory {
 		Entity ship = world.createEntity();
 		
 		Position position = world.createComponent(Position.class);
+		position.world.setToTranslation(x, y, z);
+		Physics physics = world.createComponent(Physics.class);
+		physics.init(1f, new Vector3(0.5f,0.5f,0.75f));
 		Movement movement = world.createComponent(Movement.class);
 		Render render = world.createComponent(Render.class);
 		Select select = world.createComponent(Select.class);
 		
-		position.world.setToTranslation(x, y, z);
-		movement.velocity.set(0, 0, 0.5f);
+//		movement.velocity.set(0, 0, 0.5f);
 		render.instance = new ModelInstance(shipModel);
 		
-		ship.addComponents(position, movement, render, select);
+		ship.addComponents(position, physics, movement, render, select);
 		ship.addToWorld();
 		
 		return ship;

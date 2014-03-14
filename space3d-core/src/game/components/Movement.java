@@ -21,4 +21,10 @@ public class Movement implements Component {
 		acceleration = null;
 	}
 
+	@Override
+	public void dispose() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

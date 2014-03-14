@@ -19,4 +19,10 @@ public class SpatialForm implements Component {
 		
 	}
 
+	@Override
+	public void dispose() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

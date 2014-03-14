@@ -7,6 +7,7 @@ import game.Space3DGame;
 import game.factories.PlanetFactory;
 import game.factories.ShipFactory;
 import game.systems.MovementSystem;
+import game.systems.PhysicsSystem;
 import game.systems.RenderSystem;
 import game.systems.SelectionSystem;
 
@@ -74,6 +75,7 @@ public class GameplayScreen implements Screen {
 		world.setSystem(new MovementSystem());
 		world.setSystem(new RenderSystem(cam));
 		world.setSystem(new SelectionSystem(cam));
+		world.setSystem(new PhysicsSystem(cam));
 
 		world.setManager(new PlayerManager());
 		world.setManager(new GroupManager());
@@ -81,9 +83,9 @@ public class GameplayScreen implements Screen {
 		world.initialize();
 
 		shipFactory = new ShipFactory(world, game.assets);
-		shipFactory.createShip(-2, 0, -2);
+		shipFactory.createShip(-3, 0, -3);
 		shipFactory.createShip(0, 0, 0);
-		shipFactory.createShip(2, 0, -2);
+		shipFactory.createShip(3, 0, -3);
 
 		PlanetFactory planetFactory = new PlanetFactory(world, game.assets);
 		planetFactory.createPlanet(2, 0, -502);

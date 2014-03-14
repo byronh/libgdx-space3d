@@ -16,4 +16,10 @@ public class Render implements Component {
 		shader = null;
 	}
 
+	@Override
+	public void dispose() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
