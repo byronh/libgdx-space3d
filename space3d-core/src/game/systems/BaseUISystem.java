@@ -16,7 +16,7 @@ public abstract class BaseUISystem extends VoidEntitySystem {
 		root.setVisible(false);
 	}
 	
-	public void toggle() {
+	public void toggleVisibility() {
 		root.setVisible(!root.isVisible());
 	}
 

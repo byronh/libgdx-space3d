@@ -25,10 +25,10 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 
-
 public class GameplayScreen extends InputAdapter implements Screen {
 
 	private Space3DGame game;
+	private GameState gameState;
 	private ComponentWorld world;
 	private ShipFactory shipFactory;
 
@@ -37,8 +37,14 @@ public class GameplayScreen extends InputAdapter implements Screen {
 	private PerspectiveCamera cam;
 	private CameraInputController camController;
 
+	private class GameState {
+		private boolean paused = false;
+		private boolean debug = false;
+	}
+
 	public GameplayScreen(Space3DGame game) {
 		this.game = game;
+		this.gameState = new GameState();
 	}
 
 	@Override
@@ -49,11 +55,11 @@ public class GameplayScreen extends InputAdapter implements Screen {
 		initInputs();
 
 		shipFactory = new ShipFactory(world, game.assets);
-		for (float x = -4; x <= 4 ; x += 2) {
+		for (float x = -4; x <= 4; x += 2) {
 			for (float z = -4; z <= 4; z += 2) {
-//				for (float y = 4; y >= -4; y -= 2) {
-					shipFactory.createShip(x, 0, z);
-//				}
+				// for (float y = 4; y >= -4; y -= 2) {
+				shipFactory.createShip(x, 0, z);
+				// }
 			}
 		}
 
@@ -64,15 +70,16 @@ public class GameplayScreen extends InputAdapter implements Screen {
 
 	@Override
 	public void render(float delta) {
-		Gdx.graphics.setTitle("Space3D - FPS: " + Gdx.graphics.getFramesPerSecond());
+		Gdx.graphics.setTitle("Space3D - FPS: "
+				+ Gdx.graphics.getFramesPerSecond());
 		camController.update();
-		
+
 		renderer.begin();
 		world.setDelta(delta);
 		world.process();
 		renderer.end(delta);
-		
-		if (debug) {
+
+		if (gameState.debug) {
 			world.getSystem(DebugSystem.class).process();
 			world.getSystem(PhysicsDebugSystem.class).process();
 		}
@@ -82,9 +89,10 @@ public class GameplayScreen extends InputAdapter implements Screen {
 	public void dispose() {
 		world.dispose();
 	}
-	
+
 	private void initCameras() {
-		cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(),
+				Gdx.graphics.getHeight());
 		cam.position.set(5.5f, 8.5f, 5.5f);
 		cam.lookAt(0, 0, 0);
 		cam.near = 0.1f;
@@ -93,20 +101,21 @@ public class GameplayScreen extends InputAdapter implements Screen {
 		camController = new CameraInputController(cam);
 		camController.rotateButton = Input.Buttons.RIGHT;
 		camController.translateTarget = false;
-		
+
 		cam.update();
 	}
-	
+
 	private void initSystems() {
 		world = new ComponentWorld();
 		renderer = new Renderer(cam);
 
 		world.setSystem(new MovementSystem());
+		world.setSystem(new PhysicsSystem());
+
 		world.setSystem(new RenderSystem(renderer));
 		world.setSystem(new SelectionSystem(renderer));
-		world.setSystem(new PhysicsSystem());
 		world.setSystem(new HudSystem(renderer, game.assets));
-		
+
 		if (game.config.devMode) {
 			world.setSystem(new DebugSystem(renderer, game.assets), true);
 			world.setSystem(new PhysicsDebugSystem(cam), true);
@@ -117,13 +126,13 @@ public class GameplayScreen extends InputAdapter implements Screen {
 
 		world.initialize();
 	}
-	
+
 	private void initInputs() {
 		inputMultiplexer = new InputMultiplexer();
 		inputMultiplexer.addProcessor(this);
 		for (EntitySystem s : world.getSystems()) {
 			if (s instanceof InputProcessor) {
-				inputMultiplexer.addProcessor((InputProcessor)s);
+				inputMultiplexer.addProcessor((InputProcessor) s);
 			}
 		}
 		inputMultiplexer.addProcessor(renderer.stage);
@@ -151,17 +160,26 @@ public class GameplayScreen extends InputAdapter implements Screen {
 		// TODO Auto-generated method stub
 	}
 
-	private boolean debug = false;
-	
 	@Override
 	public boolean keyDown(int keycode) {
 		if (keycode == Input.Keys.ESCAPE) {
 			game.exit();
 			return true;
-		} else if (keycode == Input.Keys.SPACE && game.config.devMode) {
-			debug = !debug;
-			world.getSystem(DebugSystem.class).toggle();
+		} else if (keycode == Input.Keys.D && game.config.devMode
+				&& Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)
+				&& Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT)) {
+			gameState.debug = !gameState.debug;
+			world.getSystem(DebugSystem.class).toggleVisibility();
 			return true;
+		} else if (keycode == Input.Keys.SPACE) {
+			gameState.paused = !gameState.paused;
+			if (gameState.paused) {
+				world.disableSystem(MovementSystem.class);
+				world.disableSystem(PhysicsSystem.class);
+			} else {
+				world.enableSystem(MovementSystem.class);
+				world.enableSystem(PhysicsSystem.class);
+			}
 		}
 		return false;
 	}
