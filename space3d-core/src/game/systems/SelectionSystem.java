@@ -43,9 +43,9 @@ public class SelectionSystem extends EntitySystem implements InputProcessor {
 	public void initialize() {
 		sm = world.getMapper(Select.class);
 		pm = world.getMapper(Position.class);
-		circleModel = renderer.modelBuilder.createCylinder(2f, 0f, 2f, 25,
+		circleModel = renderer.modelBuilder.createCylinder(1.8f, 0f, 1.8f, 20,
 				new Material(ColorAttribute.createDiffuse(Color.GREEN),
-						new BlendingAttribute(0.4f)), Usage.Position);
+						new BlendingAttribute(0.25f)), Usage.Position);
 		circle = new ModelInstance(circleModel);
 	}
 
@@ -106,8 +106,7 @@ public class SelectionSystem extends EntitySystem implements InputProcessor {
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
 		if (button == Input.Buttons.LEFT) {
 
-			if (!Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)
-					&& !Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT)) {
+			if (!Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) && !Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT)) {
 				deselectAll();
 			}
 
@@ -116,8 +115,7 @@ public class SelectionSystem extends EntitySystem implements InputProcessor {
 			for (Entity e : actives) {
 				Vector3 position = new Vector3();
 				pm.get(e).world.getTranslation(position);
-				if (Intersector.intersectRaySphere(ray, position, 0.5f,
-						intersection)) {
+				if (Intersector.intersectRaySphere(ray, position, 0.5f, intersection)) {
 					sm.get(e).selected = !sm.get(e).selected;
 					return false;
 				}

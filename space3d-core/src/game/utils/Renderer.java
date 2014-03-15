@@ -3,6 +3,7 @@ package game.utils;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -15,6 +16,7 @@ public class Renderer {
 	public final ModelBatch modelBatch;
 	public final ModelBuilder modelBuilder;
 	public final ShapeRenderer shapeRenderer;
+	public final SpriteBatch spriteBatch;
 	public final Stage stage;
 	
 	public Renderer(PerspectiveCamera camera) {
@@ -22,6 +24,7 @@ public class Renderer {
 		modelBatch = new ModelBatch();
 		modelBuilder = new ModelBuilder();
 		shapeRenderer = new ShapeRenderer();
+		spriteBatch = new SpriteBatch();
 		stage = new Stage();
 	}
 	

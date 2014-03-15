@@ -34,7 +34,7 @@ public class Space3DGame extends Game {
 
 		loadConfig();
 		
-		log(Gdx.gl20.glGetString(GL20.GL_VERSION));
+		log("OpenGL version " + Gdx.gl20.glGetString(GL20.GL_VERSION));
 
 		assets = new AssetManager();
 
