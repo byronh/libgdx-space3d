@@ -1,8 +1,6 @@
 package game.systems;
 
-import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g3d.Environment;
-import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.utils.Array;
@@ -13,6 +11,7 @@ import engine.artemis.Filter;
 import engine.artemis.systems.EntitySystem;
 import game.components.Position;
 import game.components.Render;
+import game.utils.Renderer;
 
 
 public class RenderSystem extends EntitySystem {
@@ -20,14 +19,13 @@ public class RenderSystem extends EntitySystem {
 	ComponentMapper<Position> pm;
 	ComponentMapper<Render> rm;
 
-	private PerspectiveCamera cam;
+	private Renderer renderer;
 	private Environment environment;
-	private ModelBatch batch;
 
 	@SuppressWarnings("unchecked")
-	public RenderSystem(PerspectiveCamera camera) {
+	public RenderSystem(Renderer renderer) {
 		super(Filter.allComponents(Position.class, Render.class));
-		cam = camera;
+		this.renderer = renderer;
 	}
 
 	@Override
@@ -35,8 +33,6 @@ public class RenderSystem extends EntitySystem {
 
 		pm = world.getMapper(Position.class);
 		rm = world.getMapper(Render.class);
-
-		batch = new ModelBatch();
 
 		environment = new Environment();
 		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, .3f, .3f, .3f, 1f));
@@ -60,13 +56,10 @@ public class RenderSystem extends EntitySystem {
 
 	@Override
 	protected void processEntities(Array<Entity> entities) {
-		// TODO extract batch so that multiple systems can render? e.g. light source
-		batch.begin(cam);
 		for (Entity e : entities) {
 			Render render = rm.get(e);
-			batch.render(render.instance, environment, render.shader);
+			renderer.modelBatch.render(render.instance, environment, render.shader);
 		}
-		batch.end();
 	}
 
 }

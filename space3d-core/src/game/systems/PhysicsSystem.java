@@ -105,7 +105,7 @@ public class PhysicsSystem extends EntitySystem {
 		btRigidBody body = physicsMapper.get(entities.first()).getBody();
 //		btDefaultMotionState motionState = physicsMapper.get(entities.first()).getMotionState();
 		if (elapsed > 1.5f && !done) {
-			body.applyCentralImpulse(tempVector.set(20, -20f, 20));
+			body.applyCentralImpulse(tempVector.set(2, -0.5f, 2));
 			done = true;
 		}
 		

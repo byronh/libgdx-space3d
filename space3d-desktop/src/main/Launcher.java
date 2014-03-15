@@ -1,11 +1,11 @@
-package com.byronh.space3d;
+package main;
 
 import game.Space3DGame;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
-public class Main {
+public class Launcher {
 	public static void main(String[] args) {
 		
 		LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
