@@ -48,7 +48,7 @@ public class ShipFactory extends EntityFactory {
 		Position position = world.createComponent(Position.class);
 		position.world.setToTranslation(x, y, z);
 		Physics physics = world.createComponent(Physics.class);
-		physics.init(1f, new Vector3(0.5f,0.5f,0.75f));
+		physics.init(0.5f, new Vector3(0.5f,0.5f,0.75f));
 		Movement movement = world.createComponent(Movement.class);
 		Render render = world.createComponent(Render.class);
 		Select select = world.createComponent(Select.class);

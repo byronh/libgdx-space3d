@@ -39,7 +39,7 @@ public class PlanetFactory extends EntityFactory {
 		ColorAttribute spec = ColorAttribute.createSpecular(0.7f, 0.7f, 0.5f, 1f);
 		FloatAttribute shine = FloatAttribute.createShininess(8.0f);
 		venus = TextureAttribute.createDiffuse(assets.get("texture-maps/venus.gif", Texture.class));
-		space = TextureAttribute.createDiffuse(assets.get("texture-maps/galaxy_starfield.png", Texture.class));
+//		space = TextureAttribute.createDiffuse(assets.get("texture-maps/galaxy_starfield.png", Texture.class));
 		sphereModel = builder.createSphere(1f, 1f, 1f, 60, 60, new Material(spec, shine), Usage.Normal | Usage.Position | Usage.TextureCoordinates);
 //		sphereModel = builder.createSphere(1f, 1f, 1f, 60, 60, GL20.GL_LINES, new Material(spec, shine), Usage.Normal | Usage.Position
 //				| Usage.TextureCoordinates);

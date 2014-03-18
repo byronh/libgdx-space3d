@@ -1,10 +1,12 @@
 package game.screens;
 
 import engine.ComponentWorld;
+import engine.artemis.Entity;
 import engine.artemis.managers.GroupManager;
 import engine.artemis.managers.PlayerManager;
 import engine.artemis.systems.EntitySystem;
 import game.Space3DGame;
+import game.components.Steering;
 import game.factories.PlanetFactory;
 import game.factories.ShipFactory;
 import game.systems.DebugSystem;
@@ -14,6 +16,8 @@ import game.systems.PhysicsDebugSystem;
 import game.systems.PhysicsSystem;
 import game.systems.RenderSystem;
 import game.systems.SelectionSystem;
+import game.systems.SteeringDebugSystem;
+import game.systems.SteeringSystem;
 import game.utils.Renderer;
 
 import com.badlogic.gdx.Gdx;
@@ -24,6 +28,7 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
+import com.badlogic.gdx.math.Vector3;
 
 public class GameplayScreen extends InputAdapter implements Screen {
 
@@ -55,17 +60,24 @@ public class GameplayScreen extends InputAdapter implements Screen {
 		initInputs();
 
 		shipFactory = new ShipFactory(world, game.assets);
-		for (float x = -4; x <= 4; x += 2) {
-			for (float z = -4; z <= 4; z += 2) {
-				// for (float y = 4; y >= -4; y -= 2) {
-				shipFactory.createShip(x, 0, z);
-				// }
-			}
-		}
+//		for (float x = -4; x <= 4; x += 2) {
+//			for (float z = -4; z <= 4; z += 2) {
+//				// for (float y = 4; y >= -4; y -= 2) {
+//				shipFactory.createShip(x, 0, z);
+//				// }
+//			}
+//		}
+		
+		Entity ship = shipFactory.createShip(-15,0,-14);
+		shipFactory.createShip(10,10,10);
+		ship.addComponent(world.createComponent(Steering.class));
+		Steering steering = ship.getComponent(Steering.class);
+		steering.targetPos = new Vector3(10,0,10);
+		steering.maxVelocity = 15f;
 
 		PlanetFactory planetFactory = new PlanetFactory(world, game.assets);
 		planetFactory.createPlanet(2, 0, -502);
-		planetFactory.createSkybox();
+//		planetFactory.createSkybox();
 	}
 
 	@Override
@@ -93,7 +105,7 @@ public class GameplayScreen extends InputAdapter implements Screen {
 	private void initCameras() {
 		cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(),
 				Gdx.graphics.getHeight());
-		cam.position.set(5.5f, 8.5f, 5.5f);
+		cam.position.set(15.5f, 18.5f, 15.5f);
 		cam.lookAt(0, 0, 0);
 		cam.near = 0.1f;
 		cam.far = 2005f;
@@ -110,11 +122,15 @@ public class GameplayScreen extends InputAdapter implements Screen {
 		renderer = new Renderer(cam);
 
 		world.setSystem(new MovementSystem());
+		world.setSystem(new SteeringSystem());
 		world.setSystem(new PhysicsSystem());
-
+		
 		world.setSystem(new RenderSystem(renderer));
+		
 		world.setSystem(new SelectionSystem(renderer));
 		world.setSystem(new HudSystem(renderer, game.assets));
+		
+		world.setSystem(new SteeringDebugSystem(renderer));
 
 		if (game.config.devMode) {
 			world.setSystem(new DebugSystem(renderer, game.assets), true);
@@ -180,6 +196,7 @@ public class GameplayScreen extends InputAdapter implements Screen {
 				world.enableSystem(MovementSystem.class);
 				world.enableSystem(PhysicsSystem.class);
 			}
+			return true;
 		}
 		return false;
 	}

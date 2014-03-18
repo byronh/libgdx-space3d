@@ -101,11 +101,11 @@ public class PhysicsSystem extends EntitySystem {
 		
 		float delta = Gdx.graphics.getDeltaTime();
 		elapsed += delta;
-		
+//		
 		btRigidBody body = physicsMapper.get(entities.first()).getBody();
 //		btDefaultMotionState motionState = physicsMapper.get(entities.first()).getMotionState();
 		if (elapsed > 1.5f && !done) {
-			body.applyCentralImpulse(tempVector.set(2, -0.5f, 2));
+			body.applyCentralImpulse(tempVector.set(0, -20, 0));
 			done = true;
 		}
 		

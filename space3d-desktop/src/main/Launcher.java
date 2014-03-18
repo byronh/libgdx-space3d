@@ -13,7 +13,7 @@ public class Launcher {
 		cfg.title = "Space3D";
 		cfg.width = 1536;
 		cfg.height = 864;
-		cfg.vSyncEnabled = true;
+//		cfg.vSyncEnabled = true;
 		cfg.resizable = false;
 		cfg.samples = 8;
 		
